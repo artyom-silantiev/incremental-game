@@ -5,47 +5,49 @@ const gameStore = useGameStore();
 const game = gameStore.game;
 const gameUpgrades = game.upgrades;
 const player = game.player;
-const units = player.units;
+const playerUnits = player.units;
 </script>
 
 <template>
   <q-page class="clicks-page">
     <div class="units-buttons q-mt-md q-gutter-md">
-      <div class="text-h6">Units buttons:</div>
+      <div class="text-h6">Units:</div>
 
       <q-btn
         color="indigo"
         no-caps
-        :disable="!units.energy.clickIsAllow"
-        @click="player.onUnitClick('energy')"
-      >
-        <q-tooltip> Effect: {{ units.energy.getEffect() }}<br /> </q-tooltip>
-        Energy<br />
-        {{ units.energy.value.toString() }}
-      </q-btn>
-
-      <q-btn
-        color="indigo"
-        no-caps
-        :disable="!units.knowledges.clickIsAllow"
-        @click="player.onUnitClick('knowledges')"
+        :disable="!playerUnits.energy.clickIsAllow"
+        @click="playerUnits.onUnitClick('energy')"
       >
         <q-tooltip>
-          Effect: {{ units.knowledges.getEffect() }}<br />
-          Energy cost: {{ units.knowledges.getCost() }}<br />
+          Effect: {{ playerUnits.energy.getEffect() }}<br />
         </q-tooltip>
-        Knowledges<br />
-        {{ units.knowledges.value.toString() }}
+        Energy<br />
+        {{ playerUnits.energy.value.toString() }}
       </q-btn>
 
       <q-btn
         color="indigo"
         no-caps
-        :disable="!units.resources.clickIsAllow"
-        @click="player.onUnitClick('resources')"
+        :disable="!playerUnits.knowledges.clickIsAllow"
+        @click="playerUnits.onUnitClick('knowledges')"
+      >
+        <q-tooltip>
+          Effect: {{ playerUnits.knowledges.getEffect() }}<br />
+          Energy cost: {{ playerUnits.knowledges.getCost() }}<br />
+        </q-tooltip>
+        Knowledges<br />
+        {{ playerUnits.knowledges.value.toString() }}
+      </q-btn>
+
+      <q-btn
+        color="indigo"
+        no-caps
+        :disable="!playerUnits.resources.clickIsAllow"
+        @click="playerUnits.onUnitClick('resources')"
       >
         Resources<br />
-        {{ units.resources.value.toString() }}
+        {{ playerUnits.resources.value.toString() }}
       </q-btn>
     </div>
 

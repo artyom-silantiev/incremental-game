@@ -1,14 +1,12 @@
 import { Unit, UnitType } from './unit';
 
-export class Player {
-  units = {
-    energy: new Unit(true, '1.0', '0'),
-    knowledges: new Unit(false, '0.5', '1.0'),
-    resources: new Unit(false, '0.25', '2.0'),
-  };
+class PlayerUnits {
+  energy = new Unit(true, '1.0', '0');
+  knowledges = new Unit(false, '0.5', '1.0');
+  resources = new Unit(false, '0.25', '2.0');
 
   onUnitClick(type: UnitType) {
-    const res = this.units[type].click();
+    const res = this[type].click();
 
     if (!res) {
       return;
@@ -17,13 +15,21 @@ export class Player {
     const { effect, cost } = res;
 
     if (type !== 'energy') {
-      if (this.units.energy.value.greaterThanOrEqualTo(cost)) {
-        this.units.energy.value = this.units.energy.value.minus(cost);
+      if (this.energy.value.greaterThanOrEqualTo(cost)) {
+        this.energy.value = this.energy.value.minus(cost);
       } else {
         return;
       }
     }
 
-    this.units[type].updateValue(effect);
+    this[type].updateValue(effect);
+  }
+}
+
+export class Player {
+  units: PlayerUnits;
+
+  constructor() {
+    this.units = new PlayerUnits();
   }
 }

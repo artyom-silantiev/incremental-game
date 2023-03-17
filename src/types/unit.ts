@@ -40,7 +40,7 @@ export class Unit {
     if (!effect) {
       effect = this.getEffect();
     }
-    return effect.mul(this.clickPowerMul);
+    return effect.mul(this.clickEnrgCostMul);
   }
 }
 
