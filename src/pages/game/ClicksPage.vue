@@ -73,7 +73,9 @@ const playerUnits = player.units;
         <br />
         <span class="upgrade-costs"
           >({{
-            upgrade.costs.map((v) => `${v.type}: ${v.value}`).join(', ')
+            upgrade.costs
+              .map((v) => `${v.unitType.name}: ${v.value}`)
+              .join(', ')
           }})</span
         >
       </q-btn>

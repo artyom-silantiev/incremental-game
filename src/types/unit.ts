@@ -6,12 +6,14 @@ const UnitsTypeDb = {} as {
 
 export function defineUnitType(
   sysUnitName: string,
+  name: string,
   clickIsAllow: boolean,
   clickPowerMul: string,
   clickEnrgCostMul: string
 ) {
   const unit = new UnitType(
     sysUnitName,
+    name,
     clickIsAllow,
     clickPowerMul,
     clickEnrgCostMul
@@ -22,10 +24,18 @@ export function defineUnitType(
   return sysUnitName;
 }
 
-export function createUnit(unitTypeName: string) {
+export function getUnitType(unitTypeName: string) {
   const unitType = UnitsTypeDb[unitTypeName];
+  if (!unitType) {
+    throw new Error('Unit type not found');
+  }
+  return unitType;
+}
+
+export function createUnit(unitTypeName: string) {
+  const unitType = getUnitType(unitTypeName);
   const unit = new Unit(
-    unitTypeName,
+    unitType,
     unitType.clickIsAllow,
     unitType.clickPowerMul,
     unitType.clickEnrgCostMul
@@ -36,6 +46,7 @@ export function createUnit(unitTypeName: string) {
 export class UnitType {
   constructor(
     public sysName: string,
+    public name: string,
     public clickIsAllow: boolean,
     public clickPowerMul: string,
     public clickEnrgCostMul: string
@@ -50,7 +61,7 @@ export class Unit {
   clickEnrgCostMul: Decimal;
 
   constructor(
-    public sysName: string,
+    public type: UnitType,
     clickIsAllow: boolean,
     clickPowerMul: string,
     clickEnrgCostMul: string
@@ -87,11 +98,31 @@ export class Unit {
 
 export class UnitCost {
   value: Decimal;
+  unitType: UnitType;
   constructor(public type: string, value: string) {
+    this.unitType = getUnitType(type);
     this.value = new Decimal(value);
   }
 }
 
-export const U_ENERGY = defineUnitType('U_ENERGY', true, '1.0', '0.0');
-export const U_KNOWLENGES = defineUnitType('U_KNOWLENGES', false, '0.5', '1.0');
-export const U_RESOURCES = defineUnitType('U_RESOURCES', false, '0.25', '2.0');
+export const U_ENERGY = defineUnitType(
+  'U_ENERGY',
+  'Energy',
+  true,
+  '1.0',
+  '0.0'
+);
+export const U_KNOWLENGES = defineUnitType(
+  'U_KNOWLENGES',
+  'Knowlenges',
+  false,
+  '0.5',
+  '1.0'
+);
+export const U_RESOURCES = defineUnitType(
+  'U_RESOURCES',
+  'Resources',
+  false,
+  '0.25',
+  '2.0'
+);
