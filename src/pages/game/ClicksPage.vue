@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGameStore } from 'src/stores/game/game';
+import { useGameStore } from 'src/stores/game';
 
 const gameStore = useGameStore();
 const game = gameStore.game;
