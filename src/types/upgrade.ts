@@ -1,11 +1,8 @@
+import { GameDb } from './db';
 import { Game } from './game';
 import { UnitCost } from './unit';
 
 export type OnUpgradeBuy = (game: Game) => void;
-
-const upgrades = {} as {
-  [upgradeName: string]: Upgrade;
-};
 
 export function defineUpgrade(
   sysName: string,
@@ -14,15 +11,21 @@ export function defineUpgrade(
   costs: UnitCost[],
   onBuy: OnUpgradeBuy
 ) {
-  upgrades[sysName] = new Upgrade(sysName, name, description, costs, onBuy);
+  GameDb.Upgrades[sysName] = new Upgrade(
+    sysName,
+    name,
+    description,
+    costs,
+    onBuy
+  );
   return sysName;
 }
 
 export function getUpgrade(upgradeName: string) {
-  if (!upgrades[upgradeName]) {
+  if (!GameDb.Upgrades[upgradeName]) {
     throw new Error('Upgrade not found!');
   }
-  return upgrades[upgradeName];
+  return GameDb.Upgrades[upgradeName];
 }
 
 export class Upgrade {
@@ -42,7 +45,7 @@ export class Upgrade {
 
   isAvailable(game: Game) {
     for (const cost of this.costs) {
-      if (game.player.units[cost.type].value.lessThan(cost.value)) {
+      if (game.player.units.get(cost.type)?.value.lessThan(cost.value)) {
         return false;
       }
     }
@@ -54,7 +57,7 @@ export class Upgrade {
       return false;
     }
     for (const cost of this.costs) {
-      game.player.units[cost.type].updateValue(cost.value.mul('-1'));
+      game.player.units.get(cost.type)?.updateValue(cost.value.mul('-1'));
     }
     this.onBuy(game);
     return true;

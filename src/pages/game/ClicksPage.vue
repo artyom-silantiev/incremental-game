@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useGameStore } from 'src/stores/game';
+import { U_ENERGY, U_KNOWLENGES, U_RESOURCES } from 'src/types/unit';
 
 const gameStore = useGameStore();
 const game = gameStore.game;
@@ -16,38 +17,42 @@ const playerUnits = player.units;
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.energy.clickIsAllow"
-        @click="playerUnits.onUnitClick('energy')"
+        :disable="!playerUnits.unitIsAllowForClicks(U_ENERGY)"
+        @click="playerUnits.onUnitClick(U_ENERGY)"
       >
         <q-tooltip>
-          Effect: {{ playerUnits.energy.getEffect() }}<br />
+          Effect: {{ playerUnits.get(U_ENERGY)?.getEffect() }}<br />
         </q-tooltip>
         Energy<br />
-        {{ playerUnits.energy.value.toString() }}
+        {{ playerUnits.get(U_ENERGY)?.value.toString() }}
       </q-btn>
 
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.knowledges.clickIsAllow"
-        @click="playerUnits.onUnitClick('knowledges')"
+        :disable="!playerUnits.unitIsAllowForClicks(U_KNOWLENGES)"
+        @click="playerUnits.onUnitClick(U_KNOWLENGES)"
       >
         <q-tooltip>
-          Effect: {{ playerUnits.knowledges.getEffect() }}<br />
-          Energy cost: {{ playerUnits.knowledges.getCost() }}<br />
+          Effect: {{ playerUnits.get(U_KNOWLENGES)?.getEffect() }}<br />
+          Energy cost: {{ playerUnits.get(U_KNOWLENGES)?.getCost() }}<br />
         </q-tooltip>
         Knowledges<br />
-        {{ playerUnits.knowledges.value.toString() }}
+        {{ playerUnits.get(U_KNOWLENGES)?.value.toString() }}
       </q-btn>
 
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.resources.clickIsAllow"
-        @click="playerUnits.onUnitClick('resources')"
+        :disable="!playerUnits.unitIsAllowForClicks(U_RESOURCES)"
+        @click="playerUnits.onUnitClick(U_RESOURCES)"
       >
+        <q-tooltip>
+          Effect: {{ playerUnits.get(U_RESOURCES)?.getEffect() }}<br />
+          Energy cost: {{ playerUnits.get(U_RESOURCES)?.getCost() }}<br />
+        </q-tooltip>
         Resources<br />
-        {{ playerUnits.resources.value.toString() }}
+        {{ playerUnits.get(U_RESOURCES)?.value.toString() }}
       </q-btn>
     </div>
 

@@ -1,6 +1,46 @@
 import Decimal from 'decimal.js';
 
-export type UnitType = 'energy' | 'knowledges' | 'resources';
+const UnitsTypeDb = {} as {
+  [sysUnitTypeName: string]: UnitType;
+};
+
+export function defineUnitType(
+  sysUnitName: string,
+  clickIsAllow: boolean,
+  clickPowerMul: string,
+  clickEnrgCostMul: string
+) {
+  const unit = new UnitType(
+    sysUnitName,
+    clickIsAllow,
+    clickPowerMul,
+    clickEnrgCostMul
+  );
+
+  UnitsTypeDb[sysUnitName] = unit;
+
+  return sysUnitName;
+}
+
+export function createUnit(unitTypeName: string) {
+  const unitType = UnitsTypeDb[unitTypeName];
+  const unit = new Unit(
+    unitTypeName,
+    unitType.clickIsAllow,
+    unitType.clickPowerMul,
+    unitType.clickEnrgCostMul
+  );
+  return unit;
+}
+
+export class UnitType {
+  constructor(
+    public sysName: string,
+    public clickIsAllow: boolean,
+    public clickPowerMul: string,
+    public clickEnrgCostMul: string
+  ) {}
+}
 
 export class Unit {
   value = new Decimal('0');
@@ -10,6 +50,7 @@ export class Unit {
   clickEnrgCostMul: Decimal;
 
   constructor(
+    public sysName: string,
     clickIsAllow: boolean,
     clickPowerMul: string,
     clickEnrgCostMul: string
@@ -46,7 +87,11 @@ export class Unit {
 
 export class UnitCost {
   value: Decimal;
-  constructor(public type: UnitType, value: string) {
+  constructor(public type: string, value: string) {
     this.value = new Decimal(value);
   }
 }
+
+export const U_ENERGY = defineUnitType('U_ENERGY', true, '1.0', '0.0');
+export const U_KNOWLENGES = defineUnitType('U_KNOWLENGES', false, '0.5', '1.0');
+export const U_RESOURCES = defineUnitType('U_RESOURCES', false, '0.25', '2.0');
