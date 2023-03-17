@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGameStore } from 'src/stores/game';
-import { U_ENERGY, U_KNOWLENGES, U_RESOURCES } from 'src/types/unit';
+import { U_ENERGY, U_KNOWLENGE, U_RESOURCE } from 'src/types/unit';
 
 const gameStore = useGameStore();
 const game = gameStore.game;
@@ -30,48 +30,52 @@ const playerUnits = player.units;
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.unitIsAllowForClicks(U_KNOWLENGES)"
-        @click="playerUnits.onUnitClick(U_KNOWLENGES)"
+        :disable="!playerUnits.unitIsAllowForClicks(U_KNOWLENGE)"
+        @click="playerUnits.onUnitClick(U_KNOWLENGE)"
       >
         <q-tooltip>
-          Effect: {{ playerUnits.get(U_KNOWLENGES)?.getEffect() }}<br />
-          Energy cost: {{ playerUnits.get(U_KNOWLENGES)?.getCost() }}<br />
+          Effect: {{ playerUnits.get(U_KNOWLENGE)?.getEffect() }}<br />
+          Energy cost: {{ playerUnits.get(U_KNOWLENGE)?.getCost() }}<br />
         </q-tooltip>
         Knowledges<br />
-        {{ playerUnits.get(U_KNOWLENGES)?.value.toString() }}
+        {{ playerUnits.get(U_KNOWLENGE)?.value.toString() }}
       </q-btn>
 
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.unitIsAllowForClicks(U_RESOURCES)"
-        @click="playerUnits.onUnitClick(U_RESOURCES)"
+        :disable="!playerUnits.unitIsAllowForClicks(U_RESOURCE)"
+        @click="playerUnits.onUnitClick(U_RESOURCE)"
       >
         <q-tooltip>
-          Effect: {{ playerUnits.get(U_RESOURCES)?.getEffect() }}<br />
-          Energy cost: {{ playerUnits.get(U_RESOURCES)?.getCost() }}<br />
+          Effect: {{ playerUnits.get(U_RESOURCE)?.getEffect() }}<br />
+          Energy cost: {{ playerUnits.get(U_RESOURCE)?.getCost() }}<br />
         </q-tooltip>
         Resources<br />
-        {{ playerUnits.get(U_RESOURCES)?.value.toString() }}
+        {{ playerUnits.get(U_RESOURCE)?.value.toString() }}
       </q-btn>
     </div>
 
-    <div class="upgrades q-mt-md">
+    <div class="upgrades q-gutter-md q-mt-md">
       <div class="text-h6">Upgrades:</div>
 
       <q-btn
         v-for="upgrade in gameUpgrades.availableUpgrades.values()"
         :key="upgrade.type.sysName"
+        class="upgrade-btn"
+        :class="{
+          disabled: gameUpgrades.upgradeIsAvailable(upgrade) === false,
+        }"
         color="indigo"
         no-caps
-        :disable="gameUpgrades.upgradeIsAvailable(upgrade) === false"
         @click="gameUpgrades.tryBuyUpgrade(upgrade.type.sysName)"
       >
-        <span class="upgrade-title"> {{ upgrade.type.name }} </span>
+        <q-tooltip>
+          {{ upgrade.type.description }}
+        </q-tooltip>
+        <span class="title"> {{ upgrade.type.name }} </span>
         <br />
-        <span class="upgrade-description">{{ upgrade.type.description }}</span>
-        <br />
-        <span class="upgrade-costs"
+        <span class="costs"
           >({{
             upgrade.type.costs
               .map((v) => `${v.unitType.name}: ${v.value}`)
@@ -86,7 +90,7 @@ const playerUnits = player.units;
 <style lang="scss">
 .clicks-page {
   margin: 0 auto;
-  max-width: 400px;
+  max-width: 900px;
 
   .units-buttons {
     .unit-button {
@@ -95,17 +99,22 @@ const playerUnits = player.units;
   }
 
   .upgrades {
-    .upgrade-title {
-      display: contents;
-      font-size: 20px;
-    }
-    .upgrade-description {
-      display: contents;
-      font-size: 14px;
-    }
-    .upgrade-costs {
-      display: contents;
-      font-size: 10px;
+    .upgrade-btn {
+      width: 100%;
+      max-width: 280px;
+
+      .title {
+        display: contents;
+        font-size: 18px;
+      }
+      .description {
+        display: contents;
+        font-size: 14px;
+      }
+      .costs {
+        display: contents;
+        font-size: 10px;
+      }
     }
   }
 }

@@ -6,17 +6,19 @@ const UnitsTypeDb = {} as {
 
 export function defineUnitType(
   sysUnitName: string,
-  name: string,
-  clickIsAllow: boolean,
-  clickPowerMul: string,
-  clickEnrgCostMul: string
+  params: {
+    name: string;
+    clickIsAllow: boolean;
+    clickPowerMul: string;
+    clickEnrgCostMul: string;
+  }
 ) {
   const unit = new UnitType(
     sysUnitName,
-    name,
-    clickIsAllow,
-    clickPowerMul,
-    clickEnrgCostMul
+    params.name,
+    params.clickIsAllow,
+    params.clickPowerMul,
+    params.clickEnrgCostMul
   );
 
   UnitsTypeDb[sysUnitName] = unit;
@@ -34,12 +36,7 @@ export function getUnitType(unitTypeName: string) {
 
 export function createUnit(unitTypeName: string) {
   const unitType = getUnitType(unitTypeName);
-  const unit = new Unit(
-    unitType,
-    unitType.clickIsAllow,
-    unitType.clickPowerMul,
-    unitType.clickEnrgCostMul
-  );
+  const unit = new Unit(unitType);
   return unit;
 }
 
@@ -60,15 +57,10 @@ export class Unit {
   clickPowerMul: Decimal;
   clickEnrgCostMul: Decimal;
 
-  constructor(
-    public type: UnitType,
-    clickIsAllow: boolean,
-    clickPowerMul: string,
-    clickEnrgCostMul: string
-  ) {
-    this.clickIsAllow = clickIsAllow;
-    this.clickPowerMul = new Decimal(clickPowerMul);
-    this.clickEnrgCostMul = new Decimal(clickEnrgCostMul);
+  constructor(public type: UnitType) {
+    this.clickIsAllow = type.clickIsAllow;
+    this.clickPowerMul = new Decimal(type.clickPowerMul);
+    this.clickEnrgCostMul = new Decimal(type.clickEnrgCostMul);
   }
 
   click() {
@@ -105,24 +97,21 @@ export class UnitCost {
   }
 }
 
-export const U_ENERGY = defineUnitType(
-  'U_ENERGY',
-  'Energy',
-  true,
-  '1.0',
-  '0.0'
-);
-export const U_KNOWLENGES = defineUnitType(
-  'U_KNOWLENGES',
-  'Knowlenges',
-  false,
-  '0.5',
-  '1.0'
-);
-export const U_RESOURCES = defineUnitType(
-  'U_RESOURCES',
-  'Resources',
-  false,
-  '0.25',
-  '2.0'
-);
+export const U_ENERGY = defineUnitType('U_ENERGY', {
+  name: 'Energy',
+  clickIsAllow: true,
+  clickPowerMul: '1.0',
+  clickEnrgCostMul: '0.0',
+});
+export const U_KNOWLENGE = defineUnitType('U_KNOWLENGE', {
+  name: 'Knowlenges',
+  clickIsAllow: false,
+  clickPowerMul: '0.5',
+  clickEnrgCostMul: '1.0',
+});
+export const U_RESOURCE = defineUnitType('U_RESOURCE', {
+  name: 'Resources',
+  clickIsAllow: false,
+  clickPowerMul: '0.25',
+  clickEnrgCostMul: '2.0',
+});

@@ -1,11 +1,12 @@
-import { createUnit, Unit, U_ENERGY, U_KNOWLENGES, U_RESOURCES } from './unit';
+import { Skill } from './skill';
+import { createUnit, Unit, U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
 
 class PlayerUnits extends Map<string, Unit> {
   constructor() {
     super();
     this.set(U_ENERGY, createUnit(U_ENERGY));
-    this.set(U_KNOWLENGES, createUnit(U_KNOWLENGES));
-    this.set(U_RESOURCES, createUnit(U_RESOURCES));
+    this.set(U_KNOWLENGE, createUnit(U_KNOWLENGE));
+    this.set(U_RESOURCE, createUnit(U_RESOURCE));
   }
 
   unitIsAllowForClicks(type: string) {
@@ -42,6 +43,13 @@ class PlayerUnits extends Map<string, Unit> {
     }
 
     unit.updateValue(effect);
+  }
+}
+
+class PlayerSkills extends Array<Skill> {
+  constructor() {
+    super();
+    this.push();
   }
 }
 

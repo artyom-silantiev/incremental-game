@@ -1,28 +1,33 @@
-import { GameDb } from './db';
 import { Game } from './game';
 import { UnitCost } from './unit';
+
+const upgradesTypes = {} as {
+  [sysUpgradeTypeName: string]: UpgradeType;
+};
 
 export type OnUpgradeBuy = (game: Game) => void;
 
 export function defineUpgradeType(
   sysName: string,
-  name: string,
-  description: string,
-  costs: UnitCost[],
-  onBuy?: OnUpgradeBuy
+  params: {
+    name: string;
+    description: string;
+    costs: UnitCost[];
+    onBuy?: OnUpgradeBuy;
+  }
 ) {
-  GameDb.UpgradesTypes[sysName] = new UpgradeType(
+  upgradesTypes[sysName] = new UpgradeType(
     sysName,
-    name,
-    description,
-    costs,
-    onBuy || function (game: Game) {}
+    params.name,
+    params.description,
+    params.costs,
+    params.onBuy || function (game: Game) {}
   );
   return sysName;
 }
 
 export function createUpgrade(upgradeName: string) {
-  const upgradeType = GameDb.UpgradesTypes[upgradeName];
+  const upgradeType = upgradesTypes[upgradeName];
   if (!upgradeType) {
     throw new Error('Upgrade type not found!');
   }

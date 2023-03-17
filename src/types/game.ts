@@ -1,10 +1,10 @@
 import { Player } from './player';
 import { createUpgrade, Upgrade } from './upgrade';
-import { GU_CLICK_KNOWLEDGES } from './upgrades';
+import { GU_CLICKS_KNOWLEDGE } from './upgrades';
 
 class GameUpgrades {
   constructor(private game: Game) {
-    this.addUpgrade(GU_CLICK_KNOWLEDGES);
+    this.addUpgrade(GU_CLICKS_KNOWLEDGE);
   }
 
   upgrades = new Map<string, Upgrade>();

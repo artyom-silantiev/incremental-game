@@ -1,44 +1,67 @@
 import Decimal from 'decimal.js';
 import { Deferred } from 'src/lib/helpers';
-import { GameDb } from './db';
 
-export async function defineSkill(
+const skillsTypes = {} as {
+  [sysSkillTypeName: string]: SkillType;
+};
+
+export async function defineSkillType(
   sysSkillName: string,
-  name: string,
-  description: string,
-  params?: {
+  params: {
+    name: string;
+    description: string;
     subSkills?: string[];
     allow?: true;
   }
 ) {
   params = params || {};
 
-  const skill = new Skill(sysSkillName, name, description);
+  const skill = new SkillType(sysSkillName, params.name, params.description);
 
   if (params.subSkills) {
-    await loadSkillsDbPromise;
-    skill.subSkills = params.subSkills.map((s) => getSkill(s));
+    await loadSkillsTypesPromise;
+    skill.subSkillsTypes = params.subSkills.map((s) => getSkillType(s));
   }
 
-  if (params.allow) {
-    skill.isAllow = true;
-  }
-
-  GameDb.Skills[sysSkillName] = skill;
+  skillsTypes[sysSkillName] = skill;
 
   return sysSkillName;
 }
 
-export function getSkill(sysSkillName: string) {
-  if (!GameDb.Skills[sysSkillName]) {
-    throw new Error('Skill not found!');
+export function getSkillType(sysSkillName: string) {
+  if (!skillsTypes[sysSkillName]) {
+    throw new Error('Skill type not found!');
   }
-  return GameDb.Skills[sysSkillName];
+  return skillsTypes[sysSkillName];
 }
 
-const loadSkillsDbPromise = new Deferred<boolean>();
-export function loadSkillsComplete() {
-  loadSkillsDbPromise.resolve(true);
+const loadSkillsTypesPromise = new Deferred<boolean>();
+export function loadSkillsTypesComplete() {
+  loadSkillsTypesPromise.resolve(true);
+}
+
+export function createSkillFromType(skillTypeName: string) {
+  const skillType = getSkillType(skillTypeName);
+  const skill = new Skill(skillType);
+
+  if (skillType.subSkillsTypes.length) {
+    for (const subSkillType of skillType.subSkillsTypes) {
+      const subSkill = createSkillFromType(subSkillType.sysName);
+      skill.subSkills.push(subSkill);
+    }
+  }
+
+  return skill;
+}
+
+export class SkillType {
+  subSkillsTypes = [] as SkillType[];
+
+  constructor(
+    public sysName: string,
+    public name: string,
+    public description: string
+  ) {}
 }
 
 export class Skill {
@@ -49,9 +72,5 @@ export class Skill {
   xp = new Decimal('0');
   needXp = new Decimal('10');
 
-  constructor(
-    public sysName: string,
-    public name: string,
-    public description: string
-  ) {}
+  constructor(public type: SkillType) {}
 }
