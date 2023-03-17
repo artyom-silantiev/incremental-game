@@ -7,19 +7,20 @@ class GameUpgrades {
     this.addUpgrade(GU_CLICK_KNOWLEDGES);
   }
 
-  upgrades = [] as Upgrade[];
-  availableUpgrades = [] as Upgrade[];
+  upgrades = new Map<string, Upgrade>();
+  availableUpgrades = new Map<string, Upgrade>();
+
+  hasUpgrade(upgradeName: string) {
+    return this.upgrades.has(upgradeName);
+  }
 
   addUpgrade(upgradeName: string) {
     const upgrade = getUpgrade(upgradeName);
-    this.availableUpgrades.push(upgrade);
+    this.availableUpgrades.set(upgradeName, upgrade);
   }
 
   private delUpgrade(upgradeName: string) {
-    const index = this.availableUpgrades.findIndex(
-      (u) => u.sysName === upgradeName
-    );
-    this.availableUpgrades.splice(index, 1);
+    this.availableUpgrades.delete(upgradeName);
   }
 
   upgradeIsAvailable(upgrade: Upgrade) {
@@ -27,9 +28,7 @@ class GameUpgrades {
   }
 
   tryBuyUpgrade(upgradeName: string) {
-    const upgrade = this.availableUpgrades.find(
-      (u) => u.sysName === upgradeName
-    );
+    const upgrade = this.availableUpgrades.get(upgradeName);
 
     if (!upgrade) {
       return new Error('Upgrade not found!');
@@ -37,7 +36,7 @@ class GameUpgrades {
 
     const res = upgrade.tryBuy(this.game);
     if (res) {
-      this.upgrades.push(upgrade);
+      this.upgrades.set(upgradeName, upgrade);
       this.delUpgrade(upgrade.sysName);
     }
   }

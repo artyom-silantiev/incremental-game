@@ -53,7 +53,7 @@ const units = player.units;
       <div class="text-h6">Upgrades:</div>
 
       <q-btn
-        v-for="upgrade in gameUpgrades.availableUpgrades"
+        v-for="upgrade in gameUpgrades.availableUpgrades.values()"
         :key="upgrade.sysName"
         color="indigo"
         no-caps

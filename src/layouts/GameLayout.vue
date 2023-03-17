@@ -1,23 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
+import { useGameStore } from 'src/stores/game';
+import { GU_OPEN_SKILLS } from 'src/types/upgrades';
 
-const essentialLinks: EssentialLinkProps[] = [
-  {
-    title: 'Clicks',
-    caption: 'for make units',
-    icon: 'school',
-    link: '/game',
-  },
-  {
-    title: 'Exit',
-    caption: 'game out',
-    icon: 'school',
-    link: '/',
-  },
-];
+const gameStore = useGameStore();
+const game = gameStore.game;
+const gameUpgrades = game.upgrades;
 
 const leftDrawerOpen = ref(false);
 
@@ -47,11 +35,46 @@ function toggleLeftDrawer() {
       <q-list>
         <q-item-label header> Game Menu </q-item-label>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <!-- ITEM Clicks -->
+        <q-item clickable tag="a" to="/game/clicks">
+          <q-item-section avatar>
+            <q-icon name="school" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Clicks</q-item-label>
+            <q-item-label caption>For make units</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <!-- ITEM Skills -->
+        <q-item
+          clickable
+          tag="a"
+          to="/game/skills"
+          :disable="!gameUpgrades.hasUpgrade(GU_OPEN_SKILLS)"
+        >
+          <q-item-section avatar>
+            <q-icon name="school" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Skills</q-item-label>
+            <q-item-label caption>Your skills</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <!-- ITEM Exit -->
+        <q-item clickable tag="a" to="/">
+          <q-item-section avatar>
+            <q-icon name="school" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Exit</q-item-label>
+            <q-item-label caption>Exit to main menu</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 

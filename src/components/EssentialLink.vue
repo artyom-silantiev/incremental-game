@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable tag="a" :to="link">
+  <q-item clickable tag="a" :to="link" :disable="disabled">
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -17,10 +17,12 @@ export interface EssentialLinkProps {
   caption?: string;
   link?: string;
   icon?: string;
+  disabled?: boolean;
 }
 withDefaults(defineProps<EssentialLinkProps>(), {
   caption: '',
   link: '#',
   icon: '',
+  disabled: false,
 });
 </script>

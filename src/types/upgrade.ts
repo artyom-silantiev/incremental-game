@@ -45,8 +45,8 @@ export class Upgrade {
       if (game.player.units[cost.type].value.lessThan(cost.value)) {
         return false;
       }
-      return true;
     }
+    return true;
   }
 
   tryBuy(game: Game) {

@@ -8,5 +8,16 @@ export const GU_CLICK_KNOWLEDGES = defineUpgrade(
   [new UnitCost('energy', '10')],
   (game) => {
     game.player.units.knowledges.clickIsAllow = true;
+    game.upgrades.addUpgrade(GU_OPEN_SKILLS);
+  }
+);
+
+export const GU_OPEN_SKILLS = defineUpgrade(
+  'GU_OPEN_SKILLS',
+  'Skills',
+  'Open skills feature',
+  [new UnitCost('energy', '20'), new UnitCost('knowledges', '10')],
+  (game) => {
+    // noting
   }
 );
