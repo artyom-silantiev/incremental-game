@@ -10,7 +10,7 @@
       <q-separator />
 
       <q-card-actions vertical>
-        <q-btn :to="{ path: '/game' }" flat>New Game</q-btn>
+        <q-btn :to="{ path: '/game/clicks' }" flat>New Game</q-btn>
       </q-card-actions>
     </q-card>
   </q-page>
