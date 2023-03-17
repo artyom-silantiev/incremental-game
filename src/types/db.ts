@@ -1,14 +1,14 @@
 import { Skill } from './skill';
-import { Upgrade } from './upgrade';
+import { UpgradeType } from './upgrade';
 
 type SlillsDb = {
   [sysSkillName: string]: Skill;
 };
-type UpgradesDb = {
-  [sysUpgradeName: string]: Upgrade;
+type UpgradesTypesDb = {
+  [sysUpgradeName: string]: UpgradeType;
 };
 
 export const GameDb = {
   Skills: {} as SlillsDb,
-  Upgrades: {} as UpgradesDb,
+  UpgradesTypes: {} as UpgradesTypesDb,
 };

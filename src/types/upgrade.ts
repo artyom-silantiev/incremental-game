@@ -4,47 +4,48 @@ import { UnitCost } from './unit';
 
 export type OnUpgradeBuy = (game: Game) => void;
 
-export function defineUpgrade(
+export function defineUpgradeType(
   sysName: string,
   name: string,
   description: string,
   costs: UnitCost[],
-  onBuy: OnUpgradeBuy
+  onBuy?: OnUpgradeBuy
 ) {
-  GameDb.Upgrades[sysName] = new Upgrade(
+  GameDb.UpgradesTypes[sysName] = new UpgradeType(
     sysName,
     name,
     description,
     costs,
-    onBuy
+    onBuy || function (game: Game) {}
   );
   return sysName;
 }
 
-export function getUpgrade(upgradeName: string) {
-  if (!GameDb.Upgrades[upgradeName]) {
-    throw new Error('Upgrade not found!');
+export function createUpgrade(upgradeName: string) {
+  const upgradeType = GameDb.UpgradesTypes[upgradeName];
+  if (!upgradeType) {
+    throw new Error('Upgrade type not found!');
   }
-  return GameDb.Upgrades[upgradeName];
+  const upgrade = new Upgrade(upgradeType);
+
+  return upgrade;
 }
 
-export class Upgrade {
-  costs: UnitCost[];
-  onBuy: OnUpgradeBuy;
-
+export class UpgradeType {
   constructor(
     public sysName: string,
     public name: string,
     public description: string,
-    costs: UnitCost[],
-    onBuy: OnUpgradeBuy
-  ) {
-    this.costs = costs;
-    this.onBuy = onBuy;
-  }
+    public costs: UnitCost[],
+    public onBuy: OnUpgradeBuy
+  ) {}
+}
+
+export class Upgrade {
+  constructor(public type: UpgradeType) {}
 
   isAvailable(game: Game) {
-    for (const cost of this.costs) {
+    for (const cost of this.type.costs) {
       if (game.player.units.get(cost.type)?.value.lessThan(cost.value)) {
         return false;
       }
@@ -56,10 +57,10 @@ export class Upgrade {
     if (!this.isAvailable(game)) {
       return false;
     }
-    for (const cost of this.costs) {
+    for (const cost of this.type.costs) {
       game.player.units.get(cost.type)?.updateValue(cost.value.mul('-1'));
     }
-    this.onBuy(game);
+    this.type.onBuy(game);
     return true;
   }
 }

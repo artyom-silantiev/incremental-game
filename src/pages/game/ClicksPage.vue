@@ -61,19 +61,19 @@ const playerUnits = player.units;
 
       <q-btn
         v-for="upgrade in gameUpgrades.availableUpgrades.values()"
-        :key="upgrade.sysName"
+        :key="upgrade.type.sysName"
         color="indigo"
         no-caps
         :disable="gameUpgrades.upgradeIsAvailable(upgrade) === false"
-        @click="gameUpgrades.tryBuyUpgrade(upgrade.sysName)"
+        @click="gameUpgrades.tryBuyUpgrade(upgrade.type.sysName)"
       >
-        <span class="upgrade-title"> {{ upgrade.name }} </span>
+        <span class="upgrade-title"> {{ upgrade.type.name }} </span>
         <br />
-        <span class="upgrade-description">{{ upgrade.description }}</span>
+        <span class="upgrade-description">{{ upgrade.type.description }}</span>
         <br />
         <span class="upgrade-costs"
           >({{
-            upgrade.costs
+            upgrade.type.costs
               .map((v) => `${v.unitType.name}: ${v.value}`)
               .join(', ')
           }})</span

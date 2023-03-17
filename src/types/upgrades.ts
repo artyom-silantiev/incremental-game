@@ -1,7 +1,7 @@
 import { Unit, UnitCost, U_ENERGY, U_KNOWLENGES } from './unit';
-import { defineUpgrade } from './upgrade';
+import { defineUpgradeType } from './upgrade';
 
-export const GU_CLICK_KNOWLEDGES = defineUpgrade(
+export const GU_CLICK_KNOWLEDGES = defineUpgradeType(
   'GU_CLICK_KNOWLEDGES',
   'Knowlenges from clicks',
   'Allow get knowlenges from clicks',
@@ -12,12 +12,9 @@ export const GU_CLICK_KNOWLEDGES = defineUpgrade(
   }
 );
 
-export const GU_OPEN_SKILLS = defineUpgrade(
+export const GU_OPEN_SKILLS = defineUpgradeType(
   'GU_OPEN_SKILLS',
   'Skills',
   'Open skills feature',
-  [new UnitCost(U_ENERGY, '20'), new UnitCost(U_KNOWLENGES, '10')],
-  (game) => {
-    // noting
-  }
+  [new UnitCost(U_ENERGY, '20'), new UnitCost(U_KNOWLENGES, '10')]
 );

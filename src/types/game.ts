@@ -1,5 +1,5 @@
 import { Player } from './player';
-import { getUpgrade, Upgrade } from './upgrade';
+import { createUpgrade, Upgrade } from './upgrade';
 import { GU_CLICK_KNOWLEDGES } from './upgrades';
 
 class GameUpgrades {
@@ -15,7 +15,7 @@ class GameUpgrades {
   }
 
   addUpgrade(upgradeName: string) {
-    const upgrade = getUpgrade(upgradeName);
+    const upgrade = createUpgrade(upgradeName);
     this.availableUpgrades.set(upgradeName, upgrade);
   }
 
@@ -37,7 +37,7 @@ class GameUpgrades {
     const res = upgrade.tryBuy(this.game);
     if (res) {
       this.upgrades.set(upgradeName, upgrade);
-      this.delUpgrade(upgrade.sysName);
+      this.delUpgrade(upgrade.type.sysName);
     }
   }
 }
