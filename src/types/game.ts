@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { EventBus } from 'quasar';
 import { createSkillFromType, Skill } from './skill';
 import { SK_CLICKS_BASE } from './skills';
 import { createUnit, Unit, U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
@@ -15,13 +15,18 @@ class GameUnits extends Map<string, Unit> {
     this.set(U_RESOURCE, createUnit(U_RESOURCE));
   }
 
+  enableClicksForUnit(unitName: string) {
+    const unit = this.get(unitName);
+    if (unit) {
+      unit.clickIsAllow = true;
+    }
+  }
+
   unitIsAllowForClicks(type: string) {
     const unit = this.get(type);
-
     if (!unit) {
       throw new Error('Unit not found');
     }
-
     return unit.clickIsAllow;
   }
 
@@ -57,12 +62,14 @@ class GameUpgrades {
   availableUpgrades = new Map<string, Upgrade>();
 
   constructor(public game: Game) {
-    this.addAvailableUpgrade(GU_CLICKS_KNOWLEDGE);
+    this.addAvailableUpgrades([GU_CLICKS_KNOWLEDGE]);
   }
 
-  addAvailableUpgrade(upgradeName: string) {
-    const upgrade = createUpgrade(upgradeName);
-    this.availableUpgrades.set(upgradeName, upgrade);
+  addAvailableUpgrades(upgradesNames: string[]) {
+    for (const upgradeName of upgradesNames) {
+      const upgrade = createUpgrade(upgradeName);
+      this.availableUpgrades.set(upgradeName, upgrade);
+    }
   }
 
   tryBuyUpgrade(upgradeName: string) {
@@ -82,14 +89,39 @@ class GameUpgrades {
   }
 }
 
-class GameSkills extends Array<Skill> {
+class GameSkillsCont {
+  allSkills = [] as Skill[];
+  mainSkills = [] as Skill[];
+
   constructor(public game: Game) {
-    super();
-    this.push(createSkillFromType(SK_CLICKS_BASE));
+    this.addMainSkill(SK_CLICKS_BASE);
+  }
+
+  addMainSkill(skillName: string) {
+    const skill = createSkillFromType(skillName);
+    this.mainSkills.push(skill);
+    this.allSkills.push(skill);
+    skill.subSkills.forEach((subSkill) => {
+      this.allSkills.push(subSkill);
+    });
+  }
+
+  enableSkill(skillName: string) {
+    const skill = this.getSkill(skillName);
+    if (skill) {
+      skill.enabled = true;
+    }
+  }
+
+  getSkill(skillName: string) {
+    const skill = this.allSkills.find(
+      (skill) => skill.type.sysName === skillName
+    );
+    return skill || null;
   }
 
   getSkillLevelOrZero(skillName: string) {
-    const skill = this.find(
+    const skill = this.allSkills.find(
       (skill) => skill.type.sysName === skillName && skill.enabled
     );
     return skill?.level || '0';
@@ -99,12 +131,19 @@ class GameSkills extends Array<Skill> {
 export class Game {
   units: GameUnits;
   upgrades: GameUpgrades;
-  skills: GameSkills;
+  skillsCont: GameSkillsCont;
+
+  eventBus = new EventBus();
 
   constructor() {
     this.units = new GameUnits(this);
     this.upgrades = new GameUpgrades(this);
-    this.skills = new GameSkills(this);
+    this.skillsCont = new GameSkillsCont(this);
+  }
+
+  init() {
+    this.skillsCont.allSkills.forEach((x) => x.init(this));
+    this.update();
   }
 
   update() {
@@ -116,6 +155,8 @@ export class Game {
     this.upgrades.availableUpgrades.forEach((x) =>
       x.updateAvailableToBuy(this)
     );
+    this.eventBus.emit('onClickUnit', unitType);
+    this.eventBus.emit('onClickUnit_' + unitType);
   }
 
   onClickUpgrade(upgradeType: string) {

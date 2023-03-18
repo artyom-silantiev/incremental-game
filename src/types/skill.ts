@@ -2,6 +2,7 @@ import Decimal from 'decimal.js';
 import { Game } from './game';
 
 type SkillUpdateHandler = (game: Game, skill: Skill) => void;
+type SkillInitHandler = (game: Game, skill: Skill) => void;
 
 const skillsTypes = {} as {
   [sysSkillTypeName: string]: SkillType;
@@ -13,6 +14,7 @@ type SkillTypeParams = {
   description: string;
   enabled: boolean;
   subSkills?: string[] | undefined;
+  initHandler?: SkillInitHandler;
   updateHandler?: SkillUpdateHandler;
 };
 
@@ -59,6 +61,7 @@ export class SkillType {
   description: string;
   enabled = false;
   subSkills = [] as string[];
+  initHandler = null as null | SkillInitHandler;
   updateHandler = null as null | SkillUpdateHandler;
 
   constructor(params: SkillTypeParams) {
@@ -68,6 +71,9 @@ export class SkillType {
     this.enabled = params.enabled;
     if (params.subSkills) {
       this.subSkills = params.subSkills;
+    }
+    if (params.initHandler) {
+      this.initHandler = params.initHandler;
     }
     if (params.updateHandler) {
       this.updateHandler = params.updateHandler;
@@ -87,6 +93,12 @@ export class Skill {
 
   constructor(public type: SkillType) {}
 
+  init(game: Game) {
+    if (this.type.initHandler) {
+      this.type.initHandler(game, this);
+    }
+  }
+
   update(game: Game) {
     if (this.type.updateHandler) {
       this.type.updateHandler(game, this);
@@ -94,6 +106,10 @@ export class Skill {
   }
 
   xpGain() {
+    if (!this.enabled) {
+      return false;
+    }
+
     const addXp = this.xpPlus.mul(this.xpRate);
 
     this.xp = this.xp.plus(addXp);
@@ -108,7 +124,7 @@ export class Skill {
 
   private levelUps() {
     while (this.xp.gte(this.xpNeed)) {
-      this.xp.minus(this.xpNeed);
+      this.xp = this.xp.minus(this.xpNeed);
       this.level = this.level.plus(1);
       this.updateXpNeed();
     }
@@ -116,6 +132,8 @@ export class Skill {
   }
 
   private updateXpNeed() {
-    this.xpNeed = new Decimal('10').plus('10').mul(this.level).pow('1.25');
+    this.xpNeed = new Decimal('10')
+      .plus(new Decimal('10').mul(this.level).pow('1.1'))
+      .ceil();
   }
 }

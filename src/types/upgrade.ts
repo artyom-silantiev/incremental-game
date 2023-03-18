@@ -52,7 +52,7 @@ export class Upgrade {
 
   updateAvailableToBuy(game: Game) {
     for (const cost of this.type.costs) {
-      if (game.units.get(cost.type)?.value.lessThan(cost.value)) {
+      if (game.units.get(cost.type)?.value.lt(cost.value)) {
         return (this.availableToBuy = false);
       }
     }
