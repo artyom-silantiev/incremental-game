@@ -1,31 +1,31 @@
 import Decimal from 'decimal.js';
-import { Deferred } from 'src/lib/helpers';
+import { Game } from './game';
+
+type SkillUpdateHandler = (game: Game, skill: Skill) => void;
 
 const skillsTypes = {} as {
   [sysSkillTypeName: string]: SkillType;
 };
 
-export async function defineSkillType(
-  sysSkillName: string,
-  params: {
-    name: string;
-    description: string;
-    subSkills?: string[];
-    allow?: true;
-  }
-) {
-  params = params || {};
+type SkillTypeParams = {
+  sysName: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  subSkills?: string[] | undefined;
+  updateHandler?: SkillUpdateHandler;
+};
 
-  const skill = new SkillType(sysSkillName, params.name, params.description);
+export function defineSkillType(params: SkillTypeParams) {
+  const skill = new SkillType(params);
 
   if (params.subSkills) {
-    await loadSkillsTypesPromise;
-    skill.subSkillsTypes = params.subSkills.map((s) => getSkillType(s));
+    skill.subSkills = params.subSkills;
   }
 
-  skillsTypes[sysSkillName] = skill;
+  skillsTypes[params.sysName] = skill;
 
-  return sysSkillName;
+  return params.sysName;
 }
 
 export function getSkillType(sysSkillName: string) {
@@ -35,42 +35,87 @@ export function getSkillType(sysSkillName: string) {
   return skillsTypes[sysSkillName];
 }
 
-const loadSkillsTypesPromise = new Deferred<boolean>();
-export function loadSkillsTypesComplete() {
-  loadSkillsTypesPromise.resolve(true);
-}
-
 export function createSkillFromType(skillTypeName: string) {
   const skillType = getSkillType(skillTypeName);
   const skill = new Skill(skillType);
 
-  if (skillType.subSkillsTypes.length) {
-    for (const subSkillType of skillType.subSkillsTypes) {
-      const subSkill = createSkillFromType(subSkillType.sysName);
+  if (skillType.subSkills.length) {
+    for (const subSkillType of skillType.subSkills) {
+      const subSkill = createSkillFromType(subSkillType);
       skill.subSkills.push(subSkill);
     }
+  }
+
+  if (skillType.enabled) {
+    skill.enabled = skillType.enabled;
   }
 
   return skill;
 }
 
 export class SkillType {
-  subSkillsTypes = [] as SkillType[];
+  sysName: string;
+  name: string;
+  description: string;
+  enabled = false;
+  subSkills = [] as string[];
+  updateHandler = null as null | SkillUpdateHandler;
 
-  constructor(
-    public sysName: string,
-    public name: string,
-    public description: string
-  ) {}
+  constructor(params: SkillTypeParams) {
+    this.sysName = params.sysName;
+    this.name = params.name;
+    this.description = params.description;
+    this.enabled = params.enabled;
+    if (params.subSkills) {
+      this.subSkills = params.subSkills;
+    }
+    if (params.updateHandler) {
+      this.updateHandler = params.updateHandler;
+    }
+  }
 }
 
 export class Skill {
   subSkills = [] as Skill[];
-  isAllow = false;
+  enabled = false;
 
   level = new Decimal('0');
   xp = new Decimal('0');
-  needXp = new Decimal('10');
+  xpPlus = new Decimal('1');
+  xpRate = new Decimal('1.0');
+  xpNeed = new Decimal('10');
 
   constructor(public type: SkillType) {}
+
+  update(game: Game) {
+    if (this.type.updateHandler) {
+      this.type.updateHandler(game, this);
+    }
+  }
+
+  xpGain() {
+    const addXp = this.xpPlus.mul(this.xpRate);
+
+    this.xp = this.xp.plus(addXp);
+
+    if (this.xp.gte(this.xpNeed)) {
+      this.levelUps();
+      return true;
+    }
+
+    return false;
+  }
+
+  private levelUps() {
+    while (this.xp.gte(this.xpNeed)) {
+      this.xp.minus(this.xpNeed);
+      this.level = this.level.plus(1);
+      this.updateXpNeed();
+    }
+    // TODO update skill effect
+  }
+
+  private updateXpNeed() {
+    this.xpNeed = new Decimal('10').plus('10').mul(this.level).pow('1.25');
+  }
 }

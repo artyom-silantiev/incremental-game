@@ -1,29 +1,29 @@
 import Decimal from 'decimal.js';
+import { Game } from './game';
+import { Skill } from './skill';
+import { SK_CLICKS_BASE } from './skills';
+
+type UnitUpdateHandler = (game: Game, unit: Unit) => void;
 
 const UnitsTypeDb = {} as {
   [sysUnitTypeName: string]: UnitType;
 };
 
-export function defineUnitType(
-  sysUnitName: string,
-  params: {
-    name: string;
-    clickIsAllow: boolean;
-    clickPowerMul: string;
-    clickEnrgCostMul: string;
-  }
-) {
-  const unit = new UnitType(
-    sysUnitName,
-    params.name,
-    params.clickIsAllow,
-    params.clickPowerMul,
-    params.clickEnrgCostMul
-  );
+type UnitTypeParams = {
+  sysName: string;
+  name: string;
+  clickIsAllow: boolean;
+  clickPowerMul: string;
+  clickCostMul: string;
+  updateHandler: UnitUpdateHandler;
+};
 
-  UnitsTypeDb[sysUnitName] = unit;
+export function defineUnitType(params: UnitTypeParams) {
+  const unit = new UnitType(params);
 
-  return sysUnitName;
+  UnitsTypeDb[params.sysName] = unit;
+
+  return params.sysName;
 }
 
 export function getUnitType(unitTypeName: string) {
@@ -41,26 +41,39 @@ export function createUnit(unitTypeName: string) {
 }
 
 export class UnitType {
-  constructor(
-    public sysName: string,
-    public name: string,
-    public clickIsAllow: boolean,
-    public clickPowerMul: string,
-    public clickEnrgCostMul: string
-  ) {}
+  sysName: string;
+  name: string;
+  clickIsAllow: boolean;
+  clickPowerMul: string;
+  clickCostMul: string;
+  updateHandler: UnitUpdateHandler;
+
+  constructor(params: UnitTypeParams) {
+    this.sysName = params.sysName;
+    this.name = params.name;
+    this.clickIsAllow = params.clickIsAllow;
+    this.clickPowerMul = params.clickPowerMul;
+    this.clickCostMul = params.clickCostMul;
+    this.updateHandler = params.updateHandler;
+  }
 }
 
 export class Unit {
   value = new Decimal('0');
+
   clickIsAllow = false;
   clickPower = new Decimal('1');
   clickPowerMul: Decimal;
-  clickEnrgCostMul: Decimal;
+  clickCostMul: Decimal;
 
   constructor(public type: UnitType) {
     this.clickIsAllow = type.clickIsAllow;
     this.clickPowerMul = new Decimal(type.clickPowerMul);
-    this.clickEnrgCostMul = new Decimal(type.clickEnrgCostMul);
+    this.clickCostMul = new Decimal(type.clickCostMul);
+  }
+
+  update(game: Game) {
+    this.type.updateHandler(game, this);
   }
 
   click() {
@@ -84,7 +97,7 @@ export class Unit {
     if (!effect) {
       effect = this.getEffect();
     }
-    return effect.mul(this.clickEnrgCostMul);
+    return effect.mul(this.clickCostMul);
   }
 }
 
@@ -97,21 +110,32 @@ export class UnitCost {
   }
 }
 
-export const U_ENERGY = defineUnitType('U_ENERGY', {
+function baseUnitUpdate(game: Game, unit: Unit) {
+  const baseClickSkillLevel = game.skills.getSkillLevelOrZero(SK_CLICKS_BASE);
+  unit.clickPower = new Decimal('1').plus(baseClickSkillLevel);
+}
+
+export const U_ENERGY = defineUnitType({
+  sysName: 'U_ENERGY',
   name: 'Energy',
   clickIsAllow: true,
   clickPowerMul: '1.0',
-  clickEnrgCostMul: '0.0',
+  clickCostMul: '0.0',
+  updateHandler: baseUnitUpdate,
 });
-export const U_KNOWLENGE = defineUnitType('U_KNOWLENGE', {
+export const U_KNOWLENGE = defineUnitType({
+  sysName: 'U_KNOWLENGE',
   name: 'Knowlenges',
   clickIsAllow: false,
   clickPowerMul: '0.5',
-  clickEnrgCostMul: '1.0',
+  clickCostMul: '1.0',
+  updateHandler: baseUnitUpdate,
 });
-export const U_RESOURCE = defineUnitType('U_RESOURCE', {
+export const U_RESOURCE = defineUnitType({
+  sysName: 'U_RESOURCE',
   name: 'Resources',
   clickIsAllow: false,
   clickPowerMul: '0.25',
-  clickEnrgCostMul: '2.0',
+  clickCostMul: '2.0',
+  updateHandler: baseUnitUpdate,
 });

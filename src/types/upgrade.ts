@@ -7,23 +7,17 @@ const upgradesTypes = {} as {
 
 export type OnUpgradeBuy = (game: Game) => void;
 
-export function defineUpgradeType(
-  sysName: string,
-  params: {
-    name: string;
-    description: string;
-    costs: UnitCost[];
-    onBuy?: OnUpgradeBuy;
-  }
-) {
-  upgradesTypes[sysName] = new UpgradeType(
-    sysName,
-    params.name,
-    params.description,
-    params.costs,
-    params.onBuy || function (game: Game) {}
-  );
-  return sysName;
+type UpgradeTypeParams = {
+  sysName: string;
+  name: string;
+  description: string;
+  costs: UnitCost[];
+  onBuy?: OnUpgradeBuy;
+};
+
+export function defineUpgradeType(params: UpgradeTypeParams) {
+  upgradesTypes[params.sysName] = new UpgradeType(params);
+  return params.sysName;
 }
 
 export function createUpgrade(upgradeName: string) {
@@ -32,40 +26,49 @@ export function createUpgrade(upgradeName: string) {
     throw new Error('Upgrade type not found!');
   }
   const upgrade = new Upgrade(upgradeType);
-
   return upgrade;
 }
 
 export class UpgradeType {
-  constructor(
-    public sysName: string,
-    public name: string,
-    public description: string,
-    public costs: UnitCost[],
-    public onBuy: OnUpgradeBuy
-  ) {}
+  sysName: string;
+  name: string;
+  description: string;
+  costs: UnitCost[];
+  onBuy?: OnUpgradeBuy;
+
+  constructor(params: UpgradeTypeParams) {
+    this.sysName = params.sysName;
+    this.name = params.name;
+    this.description = params.description;
+    this.costs = params.costs;
+    this.onBuy = params.onBuy;
+  }
 }
 
 export class Upgrade {
+  availableToBuy = false;
+
   constructor(public type: UpgradeType) {}
 
-  isAvailable(game: Game) {
+  updateAvailableToBuy(game: Game) {
     for (const cost of this.type.costs) {
       if (game.units.get(cost.type)?.value.lessThan(cost.value)) {
-        return false;
+        return (this.availableToBuy = false);
       }
     }
-    return true;
+    return (this.availableToBuy = true);
   }
 
   tryBuy(game: Game) {
-    if (!this.isAvailable(game)) {
+    if (!this.availableToBuy) {
       return false;
     }
     for (const cost of this.type.costs) {
       game.units.get(cost.type)?.updateValue(cost.value.mul('-1'));
     }
-    this.type.onBuy(game);
+    if (this.type.onBuy) {
+      this.type.onBuy(game);
+    }
     return true;
   }
 }

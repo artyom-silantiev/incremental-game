@@ -17,7 +17,7 @@ const units = game.units;
         color="indigo"
         no-caps
         :disable="!units.unitIsAllowForClicks(U_ENERGY)"
-        @click="units.onUnitClick(U_ENERGY)"
+        @click="game.onClickUnit(U_ENERGY)"
       >
         <q-tooltip>
           Effect: {{ units.get(U_ENERGY)?.getEffect() }}<br />
@@ -30,7 +30,7 @@ const units = game.units;
         color="indigo"
         no-caps
         :disable="!units.unitIsAllowForClicks(U_KNOWLENGE)"
-        @click="units.onUnitClick(U_KNOWLENGE)"
+        @click="game.onClickUnit(U_KNOWLENGE)"
       >
         <q-tooltip>
           Effect: {{ units.get(U_KNOWLENGE)?.getEffect() }}<br />
@@ -44,7 +44,7 @@ const units = game.units;
         color="indigo"
         no-caps
         :disable="!units.unitIsAllowForClicks(U_RESOURCE)"
-        @click="units.onUnitClick(U_RESOURCE)"
+        @click="game.onClickUnit(U_RESOURCE)"
       >
         <q-tooltip>
           Effect: {{ units.get(U_RESOURCE)?.getEffect() }}<br />
@@ -60,14 +60,14 @@ const units = game.units;
 
       <q-btn
         v-for="upgrade in upgrades.availableUpgrades.values()"
-        :key="upgrade.type.sysName"
+        :key="upgrade.type.sysName + upgrade.availableToBuy"
         class="upgrade-btn"
         :class="{
-          disabled: upgrades.upgradeIsAvailable(upgrade) === false,
+          disabled: upgrade.availableToBuy === false,
         }"
         color="indigo"
         no-caps
-        @click="upgrades.tryBuyUpgrade(upgrade.type.sysName)"
+        @click="game.onClickUpgrade(upgrade.type.sysName)"
       >
         <q-tooltip>
           {{ upgrade.type.description }}

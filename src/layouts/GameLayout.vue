@@ -52,7 +52,7 @@ function toggleLeftDrawer() {
           clickable
           tag="a"
           to="/game/skills"
-          :disable="!gameUpgrades.hasUpgrade(GU_OPEN_SKILLS)"
+          :disable="!gameUpgrades.upgrades.has(GU_OPEN_SKILLS)"
         >
           <q-item-section avatar>
             <q-icon name="school" />

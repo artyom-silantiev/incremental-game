@@ -1,10 +1,14 @@
-import { Skill } from './skill';
+import { ref } from 'vue';
+import { createSkillFromType, Skill } from './skill';
+import { SK_CLICKS_BASE } from './skills';
 import { createUnit, Unit, U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
 import { createUpgrade, Upgrade } from './upgrade';
 import { GU_CLICKS_KNOWLEDGE } from './upgrades';
 
+export type GameUpdateHandler = (game: Game) => void;
+
 class GameUnits extends Map<string, Unit> {
-  constructor() {
+  constructor(public game: Game) {
     super();
     this.set(U_ENERGY, createUnit(U_ENERGY));
     this.set(U_KNOWLENGE, createUnit(U_KNOWLENGE));
@@ -21,7 +25,7 @@ class GameUnits extends Map<string, Unit> {
     return unit.clickIsAllow;
   }
 
-  onUnitClick(type: string) {
+  onClickUnit(type: string) {
     const unit = this.get(type);
 
     if (!unit) {
@@ -49,49 +53,46 @@ class GameUnits extends Map<string, Unit> {
 }
 
 class GameUpgrades {
-  constructor(private game: Game) {
-    this.addUpgrade(GU_CLICKS_KNOWLEDGE);
-  }
-
   upgrades = new Map<string, Upgrade>();
   availableUpgrades = new Map<string, Upgrade>();
 
-  hasUpgrade(upgradeName: string) {
-    return this.upgrades.has(upgradeName);
+  constructor(public game: Game) {
+    this.addAvailableUpgrade(GU_CLICKS_KNOWLEDGE);
   }
 
-  addUpgrade(upgradeName: string) {
+  addAvailableUpgrade(upgradeName: string) {
     const upgrade = createUpgrade(upgradeName);
     this.availableUpgrades.set(upgradeName, upgrade);
-  }
-
-  private delUpgrade(upgradeName: string) {
-    this.availableUpgrades.delete(upgradeName);
-  }
-
-  upgradeIsAvailable(upgrade: Upgrade) {
-    return upgrade.isAvailable(this.game);
   }
 
   tryBuyUpgrade(upgradeName: string) {
     const upgrade = this.availableUpgrades.get(upgradeName);
 
     if (!upgrade) {
-      return new Error('Upgrade not found!');
+      throw new Error('Upgrade not found!');
     }
 
     const res = upgrade.tryBuy(this.game);
     if (res) {
       this.upgrades.set(upgradeName, upgrade);
-      this.delUpgrade(upgrade.type.sysName);
+      this.availableUpgrades.delete(upgradeName);
     }
+
+    return res;
   }
 }
 
 class GameSkills extends Array<Skill> {
-  constructor() {
+  constructor(public game: Game) {
     super();
-    this.push();
+    this.push(createSkillFromType(SK_CLICKS_BASE));
+  }
+
+  getSkillLevelOrZero(skillName: string) {
+    const skill = this.find(
+      (skill) => skill.type.sysName === skillName && skill.enabled
+    );
+    return skill?.level || '0';
   }
 }
 
@@ -101,8 +102,26 @@ export class Game {
   skills: GameSkills;
 
   constructor() {
-    this.units = new GameUnits();
+    this.units = new GameUnits(this);
     this.upgrades = new GameUpgrades(this);
-    this.skills = new GameSkills();
+    this.skills = new GameSkills(this);
+  }
+
+  update() {
+    this.units.forEach((x) => x.update(this));
+  }
+
+  onClickUnit(unitType: string) {
+    this.units.onClickUnit(unitType);
+    this.upgrades.availableUpgrades.forEach((x) =>
+      x.updateAvailableToBuy(this)
+    );
+  }
+
+  onClickUpgrade(upgradeType: string) {
+    const res = this.upgrades.tryBuyUpgrade(upgradeType);
+    if (res) {
+      this.update();
+    }
   }
 }
