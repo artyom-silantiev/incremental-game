@@ -1,6 +1,52 @@
-import { Player } from './player';
+import { Skill } from './skill';
+import { createUnit, Unit, U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
 import { createUpgrade, Upgrade } from './upgrade';
 import { GU_CLICKS_KNOWLEDGE } from './upgrades';
+
+class GameUnits extends Map<string, Unit> {
+  constructor() {
+    super();
+    this.set(U_ENERGY, createUnit(U_ENERGY));
+    this.set(U_KNOWLENGE, createUnit(U_KNOWLENGE));
+    this.set(U_RESOURCE, createUnit(U_RESOURCE));
+  }
+
+  unitIsAllowForClicks(type: string) {
+    const unit = this.get(type);
+
+    if (!unit) {
+      throw new Error('Unit not found');
+    }
+
+    return unit.clickIsAllow;
+  }
+
+  onUnitClick(type: string) {
+    const unit = this.get(type);
+
+    if (!unit) {
+      throw new Error('Unit not found');
+    }
+
+    const clickRes = unit.click();
+    if (!clickRes) {
+      return;
+    }
+    const { effect, cost } = clickRes;
+
+    if (type !== 'energy') {
+      const energyUnit = this.get(U_ENERGY) as Unit;
+
+      if (energyUnit.value.greaterThanOrEqualTo(cost)) {
+        energyUnit.value = energyUnit.value.minus(cost);
+      } else {
+        return;
+      }
+    }
+
+    unit.updateValue(effect);
+  }
+}
 
 class GameUpgrades {
   constructor(private game: Game) {
@@ -42,11 +88,21 @@ class GameUpgrades {
   }
 }
 
+class GameSkills extends Array<Skill> {
+  constructor() {
+    super();
+    this.push();
+  }
+}
+
 export class Game {
-  player = new Player();
+  units: GameUnits;
   upgrades: GameUpgrades;
+  skills: GameSkills;
 
   constructor() {
+    this.units = new GameUnits();
     this.upgrades = new GameUpgrades(this);
+    this.skills = new GameSkills();
   }
 }

@@ -4,9 +4,8 @@ import { U_ENERGY, U_KNOWLENGE, U_RESOURCE } from 'src/types/unit';
 
 const gameStore = useGameStore();
 const game = gameStore.game;
-const gameUpgrades = game.upgrades;
-const player = game.player;
-const playerUnits = player.units;
+const upgrades = game.upgrades;
+const units = game.units;
 </script>
 
 <template>
@@ -17,42 +16,42 @@ const playerUnits = player.units;
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.unitIsAllowForClicks(U_ENERGY)"
-        @click="playerUnits.onUnitClick(U_ENERGY)"
+        :disable="!units.unitIsAllowForClicks(U_ENERGY)"
+        @click="units.onUnitClick(U_ENERGY)"
       >
         <q-tooltip>
-          Effect: {{ playerUnits.get(U_ENERGY)?.getEffect() }}<br />
+          Effect: {{ units.get(U_ENERGY)?.getEffect() }}<br />
         </q-tooltip>
         Energy<br />
-        {{ playerUnits.get(U_ENERGY)?.value.toString() }}
+        {{ units.get(U_ENERGY)?.value.toString() }}
       </q-btn>
 
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.unitIsAllowForClicks(U_KNOWLENGE)"
-        @click="playerUnits.onUnitClick(U_KNOWLENGE)"
+        :disable="!units.unitIsAllowForClicks(U_KNOWLENGE)"
+        @click="units.onUnitClick(U_KNOWLENGE)"
       >
         <q-tooltip>
-          Effect: {{ playerUnits.get(U_KNOWLENGE)?.getEffect() }}<br />
-          Energy cost: {{ playerUnits.get(U_KNOWLENGE)?.getCost() }}<br />
+          Effect: {{ units.get(U_KNOWLENGE)?.getEffect() }}<br />
+          Energy cost: {{ units.get(U_KNOWLENGE)?.getCost() }}<br />
         </q-tooltip>
         Knowledges<br />
-        {{ playerUnits.get(U_KNOWLENGE)?.value.toString() }}
+        {{ units.get(U_KNOWLENGE)?.value.toString() }}
       </q-btn>
 
       <q-btn
         color="indigo"
         no-caps
-        :disable="!playerUnits.unitIsAllowForClicks(U_RESOURCE)"
-        @click="playerUnits.onUnitClick(U_RESOURCE)"
+        :disable="!units.unitIsAllowForClicks(U_RESOURCE)"
+        @click="units.onUnitClick(U_RESOURCE)"
       >
         <q-tooltip>
-          Effect: {{ playerUnits.get(U_RESOURCE)?.getEffect() }}<br />
-          Energy cost: {{ playerUnits.get(U_RESOURCE)?.getCost() }}<br />
+          Effect: {{ units.get(U_RESOURCE)?.getEffect() }}<br />
+          Energy cost: {{ units.get(U_RESOURCE)?.getCost() }}<br />
         </q-tooltip>
         Resources<br />
-        {{ playerUnits.get(U_RESOURCE)?.value.toString() }}
+        {{ units.get(U_RESOURCE)?.value.toString() }}
       </q-btn>
     </div>
 
@@ -60,15 +59,15 @@ const playerUnits = player.units;
       <div class="text-h6">Upgrades:</div>
 
       <q-btn
-        v-for="upgrade in gameUpgrades.availableUpgrades.values()"
+        v-for="upgrade in upgrades.availableUpgrades.values()"
         :key="upgrade.type.sysName"
         class="upgrade-btn"
         :class="{
-          disabled: gameUpgrades.upgradeIsAvailable(upgrade) === false,
+          disabled: upgrades.upgradeIsAvailable(upgrade) === false,
         }"
         color="indigo"
         no-caps
-        @click="gameUpgrades.tryBuyUpgrade(upgrade.type.sysName)"
+        @click="upgrades.tryBuyUpgrade(upgrade.type.sysName)"
       >
         <q-tooltip>
           {{ upgrade.type.description }}

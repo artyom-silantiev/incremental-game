@@ -51,7 +51,7 @@ export class Upgrade {
 
   isAvailable(game: Game) {
     for (const cost of this.type.costs) {
-      if (game.player.units.get(cost.type)?.value.lessThan(cost.value)) {
+      if (game.units.get(cost.type)?.value.lessThan(cost.value)) {
         return false;
       }
     }
@@ -63,7 +63,7 @@ export class Upgrade {
       return false;
     }
     for (const cost of this.type.costs) {
-      game.player.units.get(cost.type)?.updateValue(cost.value.mul('-1'));
+      game.units.get(cost.type)?.updateValue(cost.value.mul('-1'));
     }
     this.type.onBuy(game);
     return true;
