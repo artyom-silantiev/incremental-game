@@ -15,6 +15,10 @@ class GameUnits extends Map<string, Unit> {
     this.set(U_RESOURCE, createUnit(U_RESOURCE));
   }
 
+  updateUnits() {
+    this.forEach((x) => x.update(this.game));
+  }
+
   enableClicksForUnit(unitName: string) {
     const unit = this.get(unitName);
     if (unit) {
@@ -64,6 +68,12 @@ class GameUpgrades {
 
   constructor(public game: Game) {
     this.addAvailableUpgrades([GU_CLICKS_KNOWLEDGE]);
+  }
+
+  updateAvailables() {
+    this.availableUpgrades.forEach((x) => {
+      x.updateAvailableToBuy(this.game);
+    });
   }
 
   addAvailableUpgrades(upgradesNames: string[]) {
@@ -148,7 +158,8 @@ export class Game {
   }
 
   update() {
-    this.units.forEach((x) => x.update(this));
+    this.units.updateUnits();
+    this.upgrades.updateAvailables();
   }
 
   onClickUnit(unitType: string) {
@@ -158,10 +169,7 @@ export class Game {
       return;
     }
 
-    this.upgrades.availableUpgrades.forEach((x) =>
-      x.updateAvailableToBuy(this)
-    );
-
+    this.upgrades.updateAvailables();
     this.eventBus.emit('onClickUnit', unitType);
     this.eventBus.emit('onClickUnit_' + unitType);
   }

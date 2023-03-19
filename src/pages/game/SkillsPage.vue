@@ -14,20 +14,6 @@ const columns = [
   { name: 'xpPlus', field: 'xpPlus', label: 'XpPlus', align: 'left' },
   { name: 'actions', field: 'actions', label: 'Actions', align: 'left' },
 ];
-
-const rows = computed(() => {
-  const rows = [] as Skill[];
-
-  skills.forEach((skill) => {
-    if (!skill.enabled) {
-      return;
-    }
-
-    rows.push(skill as Skill);
-  });
-
-  return rows;
-});
 </script>
 
 <template>
@@ -35,7 +21,7 @@ const rows = computed(() => {
     <div class="skills-table q-mt-md q-pa-md q-gutter-sm">
       <q-table
         title="Skills"
-        :rows="rows"
+        :rows="skills.filter((x) => x.enabled)"
         :columns="columns"
         row-key="index"
         hide-bottom

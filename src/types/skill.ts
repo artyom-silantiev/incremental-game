@@ -85,7 +85,7 @@ export class Skill {
   subSkills = [] as Skill[];
   enabled = false;
 
-  level = new Decimal('0');
+  level = new Decimal('1');
   xp = new Decimal('0');
   xpPlus = new Decimal('1');
   xpRate = new Decimal('1.0');
@@ -131,8 +131,6 @@ export class Skill {
   }
 
   private updateXpNeed() {
-    this.xpNeed = new Decimal('10')
-      .plus(new Decimal('10').mul(this.level).pow('1.1'))
-      .ceil();
+    this.xpNeed = new Decimal(this.level).pow('1.15').mul('10').ceil();
   }
 }
