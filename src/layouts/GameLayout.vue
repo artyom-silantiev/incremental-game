@@ -1,7 +1,8 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useGameStore } from 'src/stores/game';
-import { GU_OPEN_SKILLS } from 'src/types/upgrades';
 
 const gameStore = useGameStore();
 const game = gameStore.game;

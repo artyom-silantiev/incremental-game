@@ -9,29 +9,12 @@ import {
 
 type UnitUpdateHandler = (game: Game, unit: Unit) => void;
 
-const UnitsTypeDb = {} as {
+const UnitsTypesDb = {} as {
   [sysUnitTypeName: string]: UnitType;
 };
 
-type UnitTypeParams = {
-  sysName: string;
-  name: string;
-  clickIsAllow: boolean;
-  clickPowerMul: string;
-  clickCostMul: string;
-  updateHandler: UnitUpdateHandler;
-};
-
-export function defineUnitType(params: UnitTypeParams) {
-  const unit = new UnitType(params);
-
-  UnitsTypeDb[params.sysName] = unit;
-
-  return params.sysName;
-}
-
 export function getUnitType(unitTypeName: string) {
-  const unitType = UnitsTypeDb[unitTypeName];
+  const unitType = UnitsTypesDb[unitTypeName];
   if (!unitType) {
     throw new Error('Unit type not found');
   }
@@ -44,6 +27,14 @@ export function createUnit(unitTypeName: string) {
   return unit;
 }
 
+type UnitTypeParams = {
+  sysName: string;
+  name: string;
+  clickIsAllow: boolean;
+  clickPowerMul: string;
+  clickCostMul: string;
+  updateHandler: UnitUpdateHandler;
+};
 export class UnitType {
   sysName: string;
   name: string;
@@ -59,6 +50,7 @@ export class UnitType {
     this.clickPowerMul = params.clickPowerMul;
     this.clickCostMul = params.clickCostMul;
     this.updateHandler = params.updateHandler;
+    UnitsTypesDb[this.sysName] = this;
   }
 }
 
@@ -123,7 +115,7 @@ function baseUnitUpdate(game: Game, unit: Unit) {
     .mul(GLOBAL_UNIT_POW_MUL);
 }
 
-export const U_ENERGY = defineUnitType({
+export const U_ENERGY = new UnitType({
   sysName: 'U_ENERGY',
   name: 'Energy',
   clickIsAllow: true,
@@ -136,8 +128,9 @@ export const U_ENERGY = defineUnitType({
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
   },
-});
-export const U_KNOWLENGE = defineUnitType({
+}).sysName;
+
+export const U_KNOWLENGE = new UnitType({
   sysName: 'U_KNOWLENGE',
   name: 'Knowlenges',
   clickIsAllow: false,
@@ -150,8 +143,9 @@ export const U_KNOWLENGE = defineUnitType({
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
   },
-});
-export const U_RESOURCE = defineUnitType({
+}).sysName;
+
+export const U_RESOURCE = new UnitType({
   sysName: 'U_RESOURCE',
   name: 'Resources',
   clickIsAllow: false,
@@ -164,4 +158,4 @@ export const U_RESOURCE = defineUnitType({
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
   },
-});
+}).sysName;

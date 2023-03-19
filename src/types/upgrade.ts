@@ -5,21 +5,6 @@ const upgradesTypes = {} as {
   [sysUpgradeTypeName: string]: UpgradeType;
 };
 
-export type OnUpgradeBuy = (game: Game) => void;
-
-type UpgradeTypeParams = {
-  sysName: string;
-  name: string;
-  description: string;
-  costs: UnitCost[];
-  onBuy?: OnUpgradeBuy;
-};
-
-export function defineUpgradeType(params: UpgradeTypeParams) {
-  upgradesTypes[params.sysName] = new UpgradeType(params);
-  return params.sysName;
-}
-
 export function createUpgrade(upgradeName: string) {
   const upgradeType = upgradesTypes[upgradeName];
   if (!upgradeType) {
@@ -29,6 +14,15 @@ export function createUpgrade(upgradeName: string) {
   return upgrade;
 }
 
+export type OnUpgradeBuy = (game: Game) => void;
+
+type UpgradeTypeParams = {
+  sysName: string;
+  name: string;
+  description: string;
+  costs: UnitCost[];
+  onBuy?: OnUpgradeBuy;
+};
 export class UpgradeType {
   sysName: string;
   name: string;
@@ -42,6 +36,7 @@ export class UpgradeType {
     this.description = params.description;
     this.costs = params.costs;
     this.onBuy = params.onBuy;
+    upgradesTypes[this.sysName] = this;
   }
 }
 

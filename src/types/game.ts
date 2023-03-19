@@ -1,4 +1,3 @@
-import { EventBus } from 'quasar';
 import { createSkillFromType, Skill } from './skill';
 import { SK_CLICKS_BASE } from './skills';
 import { createUnit, Unit, U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
@@ -107,12 +106,12 @@ class GameSkills {
     this.addMainSkill(SK_CLICKS_BASE);
   }
 
-  onGameEvent(eventType: GameEvent, ...eventArgs: any[]) {
+  onUnitClick(unitType: string) {
     this.skills
       .filter((skill) => skill.enabled)
       .forEach((skill) => {
-        if (skill.type.onGameEvent) {
-          skill.type.onGameEvent(this.game, skill, eventType, ...eventArgs);
+        if (skill.type.onUnitClick) {
+          skill.type.onUnitClick(this.game, skill, unitType);
         }
       });
   }
@@ -154,10 +153,6 @@ class GameSkills {
   }
 }
 
-export enum GameEvent {
-  UnitClick,
-}
-
 export class Game {
   units: GameUnits;
   upgrades: GameUpgrades;
@@ -178,10 +173,6 @@ export class Game {
     this.upgrades.updateAvailables();
   }
 
-  onEvent(eventType: GameEvent, ...eventArgs: any[]) {
-    this.skills.onGameEvent(eventType, ...eventArgs);
-  }
-
   onClickUnit(unitType: string) {
     const res = this.units.onClickUnit(unitType);
 
@@ -190,7 +181,7 @@ export class Game {
     }
 
     this.upgrades.updateAvailables();
-    this.onEvent(GameEvent.UnitClick, unitType);
+    this.skills.onUnitClick(unitType);
   }
 
   onClickUpgrade(upgradeType: string) {
