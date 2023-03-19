@@ -39,7 +39,7 @@ class GameUnits extends Map<string, Unit> {
 
     const clickRes = unit.click();
     if (!clickRes) {
-      return;
+      return false;
     }
     const { effect, cost } = clickRes;
 
@@ -49,11 +49,12 @@ class GameUnits extends Map<string, Unit> {
       if (energyUnit.value.greaterThanOrEqualTo(cost)) {
         energyUnit.value = energyUnit.value.minus(cost);
       } else {
-        return;
+        return false;
       }
     }
 
     unit.updateValue(effect);
+    return true;
   }
 }
 
@@ -151,10 +152,16 @@ export class Game {
   }
 
   onClickUnit(unitType: string) {
-    this.units.onClickUnit(unitType);
+    const res = this.units.onClickUnit(unitType);
+
+    if (!res) {
+      return;
+    }
+
     this.upgrades.availableUpgrades.forEach((x) =>
       x.updateAvailableToBuy(this)
     );
+
     this.eventBus.emit('onClickUnit', unitType);
     this.eventBus.emit('onClickUnit_' + unitType);
   }

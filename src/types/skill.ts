@@ -128,7 +128,6 @@ export class Skill {
       this.level = this.level.plus(1);
       this.updateXpNeed();
     }
-    // TODO update skill effect
   }
 
   private updateXpNeed() {

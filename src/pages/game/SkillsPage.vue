@@ -15,7 +15,6 @@ const columns = [
   { name: 'actions', field: 'actions', label: 'Actions', align: 'left' },
 ];
 
-const skill = ref<Skill>();
 const rows = computed(() => {
   const rows = [] as Skill[];
 
@@ -34,7 +33,6 @@ const rows = computed(() => {
 <template>
   <q-page class="skills-page">
     <div class="skills-table q-mt-md q-pa-md q-gutter-sm">
-      {{ rows.length }}
       <q-table
         title="Skills"
         :rows="rows"
@@ -70,7 +68,6 @@ const rows = computed(() => {
             :props="props"
             :key="`e_${props.row.index}`"
             class="q-virtual-scroll--with-prev"
-            :set="(skill = props.row)"
           >
             <q-td colspan="100%">
               <q-list dense>
@@ -111,7 +108,7 @@ const rows = computed(() => {
                           {{ props.row?.level }}
                         </q-td>
                         <q-td key="xp" :props="props">
-                          {{ props.row?.xp }}/{{ skill?.xpNeed }}
+                          {{ props.row?.xp }}/{{ props.row?.xpNeed }}
                         </q-td>
                         <q-td key="xpPlus" :props="props">
                           {{ props.row?.xpPlus.mul(props.row.xpRate) }}
