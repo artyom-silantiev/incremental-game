@@ -23,6 +23,10 @@ const columns = [
   { name: 'xpPlus', field: 'xpPlus', label: 'XpPlus', align: 'left' },
   { name: 'actions', field: 'actions', label: 'Actions', align: 'left' },
 ] as QTableColumn[];
+
+function getSkillXpProgress(skill: Skill) {
+  return skill.xp.div(skill.xpNeed).toNumber();
+}
 </script>
 
 <template>
@@ -36,8 +40,12 @@ const columns = [
   >
     <template v-slot:header="props">
       <q-tr :props="props">
-        <q-th v-for="col in props.cols" :key="col.name" :props="props">
-          {{ col.label }}
+        <q-th key="name" style="width: 20%; text-align: left"> Name </q-th>
+        <q-th key="level" style="width: 10%; text-align: left"> Level </q-th>
+        <q-th key="xp" style="width: 30%; text-align: left"> Xp </q-th>
+        <q-th key="xpPlus" style="width: 10%; text-align: left"> +Xp </q-th>
+        <q-th key="actions" style="width: 30%; text-align: left">
+          Actions
         </q-th>
       </q-tr>
     </template>
@@ -50,7 +58,16 @@ const columns = [
         <q-td key="level">
           {{ props.row?.level }}
         </q-td>
-        <q-td key="xp"> {{ props.row?.xp }}/{{ props.row?.xpNeed }} </q-td>
+        <q-td key="xp">
+          <q-linear-progress
+            rounded
+            size="15px"
+            :title="props.row?.xp + '/' + props.row?.xpNeed"
+            :value="getSkillXpProgress(props.row)"
+            color="secondary"
+            class="q-mt-sm"
+          />
+        </q-td>
         <q-td key="xpPlus">
           {{ props.row?.xpPlus.mul(props.row.xpRate) }}
         </q-td>
