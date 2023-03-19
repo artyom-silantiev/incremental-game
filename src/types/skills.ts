@@ -4,7 +4,7 @@ import { U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
 export const SK_CLICKS_ENERGY = defineSkillType({
   sysName: 'SK_CLICKS_ENERGY',
   name: 'Energy clicks',
-  description: 'Increase energy click power by 2% from skill level',
+  description: 'Increase energy click power by 2% per skill level',
   enabled: false,
   initHandler: (game, skill) => {
     game.eventBus.on(`onClickUnit_${U_ENERGY}`, () => {
@@ -17,7 +17,7 @@ export const SK_CLICKS_ENERGY = defineSkillType({
 export const SK_CLICKS_KNOWLEDGE = defineSkillType({
   sysName: 'SK_CLICKS_KNOWLEDGE',
   name: 'Knowlenge clicks',
-  description: 'Increase knowledge click power by 2% from skill level',
+  description: 'Increase knowledge click power by 2% per skill level',
   enabled: false,
   initHandler: (game, skill) => {
     game.eventBus.on(`onClickUnit_${U_KNOWLENGE}`, () => {
@@ -30,7 +30,7 @@ export const SK_CLICKS_KNOWLEDGE = defineSkillType({
 export const SK_CLICKS_RESOURCE = defineSkillType({
   sysName: 'SK_CLICKS_RESOURCE',
   name: 'Resource clicks',
-  description: 'Increase resource click power by 2% from skill level',
+  description: 'Increase resource click power by 2% per skill level',
   enabled: false,
   initHandler: (game, skill) => {
     game.eventBus.on(`onClickUnit_${U_RESOURCE}`, () => {
@@ -43,7 +43,7 @@ export const SK_CLICKS_RESOURCE = defineSkillType({
 export const SK_CLICKS_BASE = defineSkillType({
   sysName: 'SK_CLICKS_BASE',
   name: 'Base clicks',
-  description: 'Increase base click power by 1 from skill level',
+  description: 'Increase base click power by 1 per skill level',
   enabled: false,
   subSkills: [SK_CLICKS_ENERGY, SK_CLICKS_KNOWLEDGE, SK_CLICKS_RESOURCE],
   initHandler: (game, skill) => {
