@@ -23,6 +23,9 @@ type UpgradeTypeParams = {
   costs: UnitCost[];
   onBuy?: OnUpgradeBuy;
 };
+export function defineUpgradeType(params: UpgradeTypeParams) {
+  return new UpgradeType(params).sysName;
+}
 export class UpgradeType {
   sysName: string;
   name: string;

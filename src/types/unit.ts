@@ -35,6 +35,9 @@ type UnitTypeParams = {
   clickCostMul: string;
   updateHandler: UnitUpdateHandler;
 };
+export function defineUnitType(params: UnitTypeParams) {
+  return new UnitType(params).sysName;
+}
 export class UnitType {
   sysName: string;
   name: string;
@@ -115,7 +118,7 @@ function baseUnitUpdate(game: Game, unit: Unit) {
     .mul(GLOBAL_UNIT_POW_MUL);
 }
 
-export const U_ENERGY = new UnitType({
+export const U_ENERGY = defineUnitType({
   sysName: 'U_ENERGY',
   name: 'Energy',
   clickIsAllow: true,
@@ -128,9 +131,9 @@ export const U_ENERGY = new UnitType({
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
   },
-}).sysName;
+});
 
-export const U_KNOWLENGE = new UnitType({
+export const U_KNOWLENGE = defineUnitType({
   sysName: 'U_KNOWLENGE',
   name: 'Knowlenges',
   clickIsAllow: false,
@@ -143,9 +146,9 @@ export const U_KNOWLENGE = new UnitType({
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
   },
-}).sysName;
+});
 
-export const U_RESOURCE = new UnitType({
+export const U_RESOURCE = defineUnitType({
   sysName: 'U_RESOURCE',
   name: 'Resources',
   clickIsAllow: false,
@@ -158,4 +161,4 @@ export const U_RESOURCE = new UnitType({
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
   },
-}).sysName;
+});

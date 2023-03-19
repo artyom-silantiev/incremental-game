@@ -1,7 +1,7 @@
-import { SkillType } from './skill';
+import { defineSkillType, SkillType } from './skill';
 import { U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
 
-export const SK_CLICKS_ENERGY = new SkillType({
+export const SK_CLICKS_ENERGY = defineSkillType({
   sysName: 'SK_CLICKS_ENERGY',
   name: 'Energy clicks',
   description: 'Increase energy click power by 2% per skill level',
@@ -11,9 +11,9 @@ export const SK_CLICKS_ENERGY = new SkillType({
       game.skills.xpGain(skill.type.sysName);
     }
   },
-}).sysName;
+});
 
-export const SK_CLICKS_KNOWLEDGE = new SkillType({
+export const SK_CLICKS_KNOWLEDGE = defineSkillType({
   sysName: 'SK_CLICKS_KNOWLEDGE',
   name: 'Knowlenge clicks',
   description: 'Increase knowledge click power by 2% per skill level',
@@ -23,9 +23,9 @@ export const SK_CLICKS_KNOWLEDGE = new SkillType({
       game.skills.xpGain(skill.type.sysName);
     }
   },
-}).sysName;
+});
 
-export const SK_CLICKS_RESOURCE = new SkillType({
+export const SK_CLICKS_RESOURCE = defineSkillType({
   sysName: 'SK_CLICKS_RESOURCE',
   name: 'Resource clicks',
   description: 'Increase resource click power by 2% per skill level',
@@ -35,9 +35,9 @@ export const SK_CLICKS_RESOURCE = new SkillType({
       game.skills.xpGain(skill.type.sysName);
     }
   },
-}).sysName;
+});
 
-export const SK_CLICKS_BASE = new SkillType({
+export const SK_CLICKS_BASE = defineSkillType({
   sysName: 'SK_CLICKS_BASE',
   name: 'Base clicks',
   description: 'Increase base click power by 1 per skill level',
@@ -46,4 +46,4 @@ export const SK_CLICKS_BASE = new SkillType({
   onUnitClick: (game, skill) => {
     game.skills.xpGain(skill.type.sysName);
   },
-}).sysName;
+});

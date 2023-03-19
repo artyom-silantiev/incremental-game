@@ -47,6 +47,9 @@ type SkillTypeParams = {
   onUpdate?: SkillUpdateHandler;
   onUnitClick?: SkillUnitClickHandler;
 };
+export function defineSkillType(params: SkillTypeParams) {
+  return new SkillType(params).sysName;
+}
 export class SkillType {
   sysName: string;
   name: string;

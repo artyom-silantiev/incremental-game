@@ -5,9 +5,9 @@ import {
   SK_CLICKS_RESOURCE,
 } from './skills';
 import { UnitCost, U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
-import { UpgradeType } from './upgrade';
+import { defineUpgradeType } from './upgrade';
 
-export const GU_CLICKS_KNOWLEDGE = new UpgradeType({
+export const GU_CLICKS_KNOWLEDGE = defineUpgradeType({
   sysName: 'GU_CLICKS_KNOWLEDGE',
   name: 'Knowlenges clicks',
   description: 'Allow get knowledges from clicks',
@@ -16,9 +16,9 @@ export const GU_CLICKS_KNOWLEDGE = new UpgradeType({
     game.units.enableClicksForUnit(U_KNOWLENGE);
     game.upgrades.addAvailableUpgrades([GU_OPEN_SKILLS, GU_RESOURCE_CLICKS]);
   },
-}).sysName;
+});
 
-export const GU_OPEN_SKILLS = new UpgradeType({
+export const GU_OPEN_SKILLS = defineUpgradeType({
   sysName: 'GU_OPEN_SKILLS',
   name: 'Skills',
   description: 'Open skills',
@@ -31,9 +31,9 @@ export const GU_OPEN_SKILLS = new UpgradeType({
       GU_SKILL_RESOURCE_CLICKS,
     ]);
   },
-}).sysName;
+});
 
-export const GU_RESOURCE_CLICKS = new UpgradeType({
+export const GU_RESOURCE_CLICKS = defineUpgradeType({
   sysName: 'GU_RESOURCE_CLICKS',
   name: 'Resources clicks',
   description: 'Allow get resources from clicks',
@@ -41,9 +41,9 @@ export const GU_RESOURCE_CLICKS = new UpgradeType({
   onBuy: (game) => {
     game.units.enableClicksForUnit(U_RESOURCE);
   },
-}).sysName;
+});
 
-export const GU_SKILL_ENERGY_CLICKS = new UpgradeType({
+export const GU_SKILL_ENERGY_CLICKS = defineUpgradeType({
   sysName: 'GU_SKILL_ENERGY_CLICKS',
   name: 'Energy clicks skill',
   description: 'Open energy clicks skill',
@@ -55,9 +55,9 @@ export const GU_SKILL_ENERGY_CLICKS = new UpgradeType({
   onBuy: (game) => {
     game.skills.enableSkill(SK_CLICKS_ENERGY);
   },
-}).sysName;
+});
 
-export const GU_SKILL_KNOWLEDGE_CLICKS = new UpgradeType({
+export const GU_SKILL_KNOWLEDGE_CLICKS = defineUpgradeType({
   sysName: 'GU_SKILL_KNOWLEDGE_CLICKS',
   name: 'Knowlenge clicks skill',
   description: 'Open knowlenge clicks skill',
@@ -69,9 +69,9 @@ export const GU_SKILL_KNOWLEDGE_CLICKS = new UpgradeType({
   onBuy: (game) => {
     game.skills.enableSkill(SK_CLICKS_KNOWLEDGE);
   },
-}).sysName;
+});
 
-export const GU_SKILL_RESOURCE_CLICKS = new UpgradeType({
+export const GU_SKILL_RESOURCE_CLICKS = defineUpgradeType({
   sysName: 'GU_SKILL_RESOURCE_CLICKS',
   name: 'Resource clicks skill',
   description: 'Open resource clicks skill',
@@ -83,4 +83,4 @@ export const GU_SKILL_RESOURCE_CLICKS = new UpgradeType({
   onBuy: (game) => {
     game.skills.enableSkill(SK_CLICKS_RESOURCE);
   },
-}).sysName;
+});
