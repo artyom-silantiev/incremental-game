@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import { useGameStore } from 'src/stores/game';
 import { Skill } from 'src/types/skill';
 
 const gameStore = useGameStore();
 const game = gameStore.game;
-const skills = game.skillsCont.mainSkills;
+const skills = game.skills.mainSkills;
 
 const columns = [
   { name: 'name', field: 'name', label: 'Name', align: 'left' },

@@ -100,7 +100,7 @@ class GameUpgrades {
   }
 }
 
-class GameSkillsCont {
+class GameSkills {
   allSkills = [] as Skill[];
   mainSkills = [] as Skill[];
 
@@ -142,18 +142,18 @@ class GameSkillsCont {
 export class Game {
   units: GameUnits;
   upgrades: GameUpgrades;
-  skillsCont: GameSkillsCont;
+  skills: GameSkills;
 
   eventBus = new EventBus();
 
   constructor() {
     this.units = new GameUnits(this);
     this.upgrades = new GameUpgrades(this);
-    this.skillsCont = new GameSkillsCont(this);
+    this.skills = new GameSkills(this);
   }
 
   init() {
-    this.skillsCont.allSkills.forEach((x) => x.init(this));
+    this.skills.allSkills.forEach((x) => x.init(this));
     this.update();
   }
 

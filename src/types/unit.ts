@@ -117,8 +117,7 @@ export class UnitCost {
 const GLOBAL_UNIT_POW_MUL = new Decimal('100.0');
 
 function baseUnitUpdate(game: Game, unit: Unit) {
-  const baseClickSkillLevel =
-    game.skillsCont.getSkillLevelOrZero(SK_CLICKS_BASE);
+  const baseClickSkillLevel = game.skills.getSkillLevelOrZero(SK_CLICKS_BASE);
   unit.clickPower = new Decimal('1')
     .plus(baseClickSkillLevel)
     .mul(GLOBAL_UNIT_POW_MUL);
@@ -132,7 +131,7 @@ export const U_ENERGY = defineUnitType({
   clickCostMul: '0.0',
   updateHandler: (game, unit) => {
     baseUnitUpdate(game, unit);
-    const mulSkillLv = game.skillsCont.getSkillLevelOrZero(SK_CLICKS_ENERGY);
+    const mulSkillLv = game.skills.getSkillLevelOrZero(SK_CLICKS_ENERGY);
     unit.clickPowerMul = new Decimal(unit.type.clickPowerMul).mul(
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
@@ -146,7 +145,7 @@ export const U_KNOWLENGE = defineUnitType({
   clickCostMul: '1.0',
   updateHandler: (game, unit) => {
     baseUnitUpdate(game, unit);
-    const mulSkillLv = game.skillsCont.getSkillLevelOrZero(SK_CLICKS_KNOWLEDGE);
+    const mulSkillLv = game.skills.getSkillLevelOrZero(SK_CLICKS_KNOWLEDGE);
     unit.clickPowerMul = new Decimal(unit.type.clickPowerMul).mul(
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );
@@ -160,7 +159,7 @@ export const U_RESOURCE = defineUnitType({
   clickCostMul: '2.0',
   updateHandler: (game, unit) => {
     baseUnitUpdate(game, unit);
-    const mulSkillLv = game.skillsCont.getSkillLevelOrZero(SK_CLICKS_RESOURCE);
+    const mulSkillLv = game.skills.getSkillLevelOrZero(SK_CLICKS_RESOURCE);
     unit.clickPowerMul = new Decimal(unit.type.clickPowerMul).mul(
       new Decimal('1').plus(new Decimal('0.02').mul(mulSkillLv))
     );

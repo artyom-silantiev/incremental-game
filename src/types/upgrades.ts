@@ -24,7 +24,7 @@ export const GU_OPEN_SKILLS = defineUpgradeType({
   description: 'Open skills',
   costs: [new UnitCost(U_ENERGY, '20'), new UnitCost(U_KNOWLENGE, '10')],
   onBuy: (game) => {
-    game.skillsCont.enableSkill(SK_CLICKS_BASE);
+    game.skills.enableSkill(SK_CLICKS_BASE);
     game.upgrades.addAvailableUpgrades([
       GU_SKILL_ENERGY_CLICKS,
       GU_SKILL_KNOWLEDGE_CLICKS,
@@ -53,7 +53,7 @@ export const GU_SKILL_ENERGY_CLICKS = defineUpgradeType({
     new UnitCost(U_RESOURCE, '25'),
   ],
   onBuy: (game) => {
-    game.skillsCont.enableSkill(SK_CLICKS_ENERGY);
+    game.skills.enableSkill(SK_CLICKS_ENERGY);
   },
 });
 
@@ -67,7 +67,7 @@ export const GU_SKILL_KNOWLEDGE_CLICKS = defineUpgradeType({
     new UnitCost(U_RESOURCE, '100'),
   ],
   onBuy: (game) => {
-    game.skillsCont.enableSkill(SK_CLICKS_KNOWLEDGE);
+    game.skills.enableSkill(SK_CLICKS_KNOWLEDGE);
   },
 });
 
@@ -81,6 +81,6 @@ export const GU_SKILL_RESOURCE_CLICKS = defineUpgradeType({
     new UnitCost(U_RESOURCE, '200'),
   ],
   onBuy: (game) => {
-    game.skillsCont.enableSkill(SK_CLICKS_RESOURCE);
+    game.skills.enableSkill(SK_CLICKS_RESOURCE);
   },
 });
