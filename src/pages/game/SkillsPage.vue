@@ -78,13 +78,13 @@ const rows = computed(() => {
                   {{ props.row?.type.description }}
                 </q-item>
                 <q-expansion-item
-                  v-if="props.row?.subSkills.length"
+                  v-if="props.row?.subSkills.filter((x: Skill) => x.enabled).length"
                   label="Sub skills"
                   expand-separator
                   dense
                 >
                   <q-table
-                    :rows="props.row.subSkills"
+                    :rows="props.row.subSkills.filter((x: Skill) => x.enabled)"
                     :columns="columns"
                     row-key="index"
                     dense
