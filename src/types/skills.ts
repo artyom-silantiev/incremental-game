@@ -1,3 +1,4 @@
+import { GameEvent } from './game';
 import { defineSkillType } from './skill';
 import { U_ENERGY, U_KNOWLENGE, U_RESOURCE } from './unit';
 
@@ -6,11 +7,10 @@ export const SK_CLICKS_ENERGY = defineSkillType({
   name: 'Energy clicks',
   description: 'Increase energy click power by 2% per skill level',
   enabled: false,
-  initHandler: (game, skill) => {
-    game.eventBus.on(`onClickUnit_${U_ENERGY}`, () => {
-      const onLevelUp = skill.xpGain();
-      if (onLevelUp) game.update();
-    });
+  onGameEvent: (game, skill, eventType, ...args: any[]) => {
+    if (eventType === GameEvent.UnitClick && args[0] === U_ENERGY) {
+      game.skills.xpGain(skill.type.sysName);
+    }
   },
 });
 
@@ -19,11 +19,10 @@ export const SK_CLICKS_KNOWLEDGE = defineSkillType({
   name: 'Knowlenge clicks',
   description: 'Increase knowledge click power by 2% per skill level',
   enabled: false,
-  initHandler: (game, skill) => {
-    game.eventBus.on(`onClickUnit_${U_KNOWLENGE}`, () => {
-      const onLevelUp = skill.xpGain();
-      if (onLevelUp) game.update();
-    });
+  onGameEvent: (game, skill, eventType, ...args: any[]) => {
+    if (eventType === GameEvent.UnitClick && args[0] === U_KNOWLENGE) {
+      game.skills.xpGain(skill.type.sysName);
+    }
   },
 });
 
@@ -32,11 +31,10 @@ export const SK_CLICKS_RESOURCE = defineSkillType({
   name: 'Resource clicks',
   description: 'Increase resource click power by 2% per skill level',
   enabled: false,
-  initHandler: (game, skill) => {
-    game.eventBus.on(`onClickUnit_${U_RESOURCE}`, () => {
-      const onLevelUp = skill.xpGain();
-      if (onLevelUp) game.update();
-    });
+  onGameEvent: (game, skill, eventType, ...args: any[]) => {
+    if (eventType === GameEvent.UnitClick && args[0] === U_RESOURCE) {
+      game.skills.xpGain(skill.type.sysName);
+    }
   },
 });
 
@@ -46,10 +44,9 @@ export const SK_CLICKS_BASE = defineSkillType({
   description: 'Increase base click power by 1 per skill level',
   enabled: false,
   subSkills: [SK_CLICKS_ENERGY, SK_CLICKS_KNOWLEDGE, SK_CLICKS_RESOURCE],
-  initHandler: (game, skill) => {
-    game.eventBus.on('onClickUnit', (unitType: string) => {
-      const onLevelUp = skill.xpGain();
-      if (onLevelUp) game.update();
-    });
+  onGameEvent: (game, skill, eventType, ...args: any[]) => {
+    if (eventType === GameEvent.UnitClick) {
+      game.skills.xpGain(skill.type.sysName);
+    }
   },
 });

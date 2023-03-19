@@ -101,20 +101,37 @@ class GameUpgrades {
 }
 
 class GameSkills {
-  allSkills = [] as Skill[];
-  mainSkills = [] as Skill[];
+  skills = [] as Skill[];
 
   constructor(public game: Game) {
     this.addMainSkill(SK_CLICKS_BASE);
   }
 
+  onGameEvent(eventType: GameEvent, ...eventArgs: any[]) {
+    this.skills
+      .filter((skill) => skill.enabled)
+      .forEach((skill) => {
+        if (skill.type.onGameEvent) {
+          skill.type.onGameEvent(this.game, skill, eventType, ...eventArgs);
+        }
+      });
+  }
+
   addMainSkill(skillName: string) {
     const skill = createSkillFromType(skillName);
-    this.mainSkills.push(skill);
-    this.allSkills.push(skill);
+    this.skills.push(skill);
     skill.subSkills.forEach((subSkill) => {
-      this.allSkills.push(subSkill);
+      this.skills.push(subSkill);
     });
+  }
+
+  xpGain(skillName: string) {
+    const skill = this.getSkill(skillName);
+    if (skill) {
+      if (skill.xpGain()) {
+        this.game.update();
+      }
+    }
   }
 
   enableSkill(skillName: string) {
@@ -125,26 +142,26 @@ class GameSkills {
   }
 
   getSkill(skillName: string) {
-    const skill = this.allSkills.find(
-      (skill) => skill.type.sysName === skillName
-    );
+    const skill = this.skills.find((skill) => skill.type.sysName === skillName);
     return skill || null;
   }
 
   getSkillLevelOrZero(skillName: string) {
-    const skill = this.allSkills.find(
+    const skill = this.skills.find(
       (skill) => skill.type.sysName === skillName && skill.enabled
     );
     return skill?.level || '0';
   }
 }
 
+export enum GameEvent {
+  UnitClick,
+}
+
 export class Game {
   units: GameUnits;
   upgrades: GameUpgrades;
   skills: GameSkills;
-
-  eventBus = new EventBus();
 
   constructor() {
     this.units = new GameUnits(this);
@@ -153,13 +170,16 @@ export class Game {
   }
 
   init() {
-    this.skills.allSkills.forEach((x) => x.init(this));
     this.update();
   }
 
   update() {
     this.units.updateUnits();
     this.upgrades.updateAvailables();
+  }
+
+  onEvent(eventType: GameEvent, ...eventArgs: any[]) {
+    this.skills.onGameEvent(eventType, ...eventArgs);
   }
 
   onClickUnit(unitType: string) {
@@ -170,8 +190,7 @@ export class Game {
     }
 
     this.upgrades.updateAvailables();
-    this.eventBus.emit('onClickUnit', unitType);
-    this.eventBus.emit('onClickUnit_' + unitType);
+    this.onEvent(GameEvent.UnitClick, unitType);
   }
 
   onClickUpgrade(upgradeType: string) {

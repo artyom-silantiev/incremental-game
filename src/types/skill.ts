@@ -1,8 +1,13 @@
 import Decimal from 'decimal.js';
-import { Game } from './game';
+import { Game, GameEvent } from './game';
 
 type SkillUpdateHandler = (game: Game, skill: Skill) => void;
-type SkillInitHandler = (game: Game, skill: Skill) => void;
+type SkillGameEventHandler = (
+  game: Game,
+  skill: Skill,
+  eventType: GameEvent,
+  ...eventData: any[]
+) => void;
 
 const skillsTypes = {} as {
   [sysSkillTypeName: string]: SkillType;
@@ -14,8 +19,8 @@ type SkillTypeParams = {
   description: string;
   enabled: boolean;
   subSkills?: string[] | undefined;
-  initHandler?: SkillInitHandler;
-  updateHandler?: SkillUpdateHandler;
+  onUpdate?: SkillUpdateHandler;
+  onGameEvent?: SkillGameEventHandler;
 };
 
 export function defineSkillType(params: SkillTypeParams) {
@@ -44,6 +49,7 @@ export function createSkillFromType(skillTypeName: string) {
   if (skillType.subSkills.length) {
     for (const subSkillType of skillType.subSkills) {
       const subSkill = createSkillFromType(subSkillType);
+      subSkill.deep = skill.deep + 1;
       skill.subSkills.push(subSkill);
     }
   }
@@ -61,8 +67,8 @@ export class SkillType {
   description: string;
   enabled = false;
   subSkills = [] as string[];
-  initHandler = null as null | SkillInitHandler;
-  updateHandler = null as null | SkillUpdateHandler;
+  onUpdate = null as null | SkillUpdateHandler;
+  onGameEvent = null as null | SkillGameEventHandler;
 
   constructor(params: SkillTypeParams) {
     this.sysName = params.sysName;
@@ -72,11 +78,11 @@ export class SkillType {
     if (params.subSkills) {
       this.subSkills = params.subSkills;
     }
-    if (params.initHandler) {
-      this.initHandler = params.initHandler;
+    if (params.onUpdate) {
+      this.onUpdate = params.onUpdate;
     }
-    if (params.updateHandler) {
-      this.updateHandler = params.updateHandler;
+    if (params.onGameEvent) {
+      this.onGameEvent = params.onGameEvent;
     }
   }
 }
@@ -85,6 +91,7 @@ export class Skill {
   subSkills = [] as Skill[];
   enabled = false;
 
+  deep = 0;
   level = new Decimal('1');
   xp = new Decimal('0');
   xpPlus = new Decimal('1');
@@ -93,15 +100,9 @@ export class Skill {
 
   constructor(public type: SkillType) {}
 
-  init(game: Game) {
-    if (this.type.initHandler) {
-      this.type.initHandler(game, this);
-    }
-  }
-
   update(game: Game) {
-    if (this.type.updateHandler) {
-      this.type.updateHandler(game, this);
+    if (this.type.onUpdate) {
+      this.type.onUpdate(game, this);
     }
   }
 

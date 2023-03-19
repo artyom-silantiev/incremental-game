@@ -31,8 +31,7 @@ function getSkillXpProgress(skill: Skill) {
 
 <template>
   <q-table
-    :title="props.subTable ? undefined : 'Skills'"
-    :rows="skills.filter((x) => x.enabled)"
+    :rows="skills"
     :columns="columns"
     row-key="index"
     :dense="props.subTable"
@@ -53,7 +52,7 @@ function getSkillXpProgress(skill: Skill) {
     <template v-slot:body="props">
       <q-tr :props="props" :key="props.row.type.sysName">
         <q-td key="name">
-          {{ props.row?.type.name }}
+          {{ props.row?.type.name }} {{ props.row?.now }}
         </q-td>
         <q-td key="level">
           {{ props.row?.level }}
@@ -66,6 +65,7 @@ function getSkillXpProgress(skill: Skill) {
             :value="getSkillXpProgress(props.row)"
             color="secondary"
             class="q-mt-sm"
+            instant-feedback
           />
         </q-td>
         <q-td key="xpPlus">
@@ -89,7 +89,10 @@ function getSkillXpProgress(skill: Skill) {
               expand-separator
               dense
             >
-              <SkillsTable :skills="props.row?.subSkills" :subTable="true" />
+              <SkillsTable
+                :skills="props.row?.subSkills.filter((x: Skill) => x.enabled)"
+                :subTable="true"
+              />
             </q-expansion-item>
           </q-list>
         </q-td>

@@ -35,32 +35,14 @@ function toggleLeftDrawer() {
       <q-list>
         <q-item-label header> Game Menu </q-item-label>
 
-        <!-- ITEM Clicks -->
-        <q-item clickable tag="a" to="/game/clicks">
+        <!-- ITEM Gane -->
+        <q-item clickable tag="a" to="/game">
           <q-item-section avatar>
             <q-icon name="school" />
           </q-item-section>
 
           <q-item-section>
-            <q-item-label>Clicks</q-item-label>
-            <q-item-label caption>For make units</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <!-- ITEM Skills -->
-        <q-item
-          clickable
-          tag="a"
-          to="/game/skills"
-          :disable="!gameUpgrades.upgrades.has(GU_OPEN_SKILLS)"
-        >
-          <q-item-section avatar>
-            <q-icon name="school" />
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label>Skills</q-item-label>
-            <q-item-label caption>Your skills</q-item-label>
+            <q-item-label>Game</q-item-label>
           </q-item-section>
         </q-item>
 
