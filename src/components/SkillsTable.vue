@@ -6,7 +6,9 @@ export default {
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar';
+import { useGameStore } from 'src/stores/game';
 import { Skill } from 'src/types/skill';
+import { U_KNOWLENGE } from 'src/types/unit';
 
 export interface Props {
   skills: Skill[];
@@ -15,6 +17,10 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
   subTable: false,
 });
+
+const gameStore = useGameStore();
+const skillsCont = gameStore.game.skills;
+const units = gameStore.game.units;
 
 const columns = [
   { name: 'name', field: 'name', label: 'Name', align: 'left' },
@@ -71,7 +77,23 @@ function getSkillXpProgress(skill: Skill) {
         <q-td key="xpPlus">
           {{ props.row?.xpPlus.mul(props.row.xpRate) }}
         </q-td>
-        <q-td key="actions"> ... </q-td>
+        <q-td key="actions">
+          <span v-if="skillsCont.allowSkillsXpUpgrades">
+            <q-btn
+              label="+1 Xp"
+              :class="{
+                disabled: units
+                  .get(U_KNOWLENGE)
+                  ?.value.lt(props.row.xpUpgradeCost),
+              }"
+              @click="skillsCont.skillXpUpgrade(props.row)"
+            >
+              <q-tooltip>
+                Knowledge cost: {{ props.row.xpUpgradeCost }}<br />
+              </q-tooltip>
+            </q-btn>
+          </span>
+        </q-td>
       </q-tr>
       <q-tr
         :props="props"

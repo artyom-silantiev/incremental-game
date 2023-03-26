@@ -91,6 +91,7 @@ export class Skill {
   xpPlus = new Decimal('1');
   xpRate = new Decimal('1.0');
   xpNeed = new Decimal('10');
+  xpUpgradeCost = new Decimal('1000');
 
   constructor(public type: SkillType) {}
 

@@ -101,9 +101,20 @@ class GameUpgrades {
 
 class GameSkills {
   skills = [] as Skill[];
+  allowSkillsXpUpgrades = false;
 
   constructor(public game: Game) {
     this.addMainSkill(SK_CLICKS_BASE);
+  }
+
+  skillXpUpgrade(skill: Skill) {
+    if (this.game.units.get(U_KNOWLENGE)?.value.gte(skill.xpUpgradeCost)) {
+      this.game.units
+        .get(U_KNOWLENGE)
+        ?.updateValue(skill.xpUpgradeCost.mul(-1));
+      skill.xpPlus = skill.xpPlus.plus('1');
+      skill.xpUpgradeCost = skill.xpUpgradeCost.mul('1.5').floor();
+    }
   }
 
   onUnitClick(unitType: string) {

@@ -29,7 +29,18 @@ export const GU_OPEN_SKILLS = defineUpgradeType({
       GU_SKILL_ENERGY_CLICKS,
       GU_SKILL_KNOWLEDGE_CLICKS,
       GU_SKILL_RESOURCE_CLICKS,
+      GU_SKILLS_XP_UPGRADES,
     ]);
+  },
+});
+
+export const GU_SKILLS_XP_UPGRADES = defineUpgradeType({
+  sysName: 'GU_SKILLS_XP_UPGRADES',
+  name: 'Skills experience upgrades',
+  description: 'Unlock skill upgrades to increase skill experience.',
+  costs: [new UnitCost(U_KNOWLENGE, '10000')],
+  onBuy: (game) => {
+    game.skills.allowSkillsXpUpgrades = true;
   },
 });
 
